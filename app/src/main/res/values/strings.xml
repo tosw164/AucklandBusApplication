@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">FirstyOne</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_realtime_timetable">RealtimeTimetable</string>
 </resources>

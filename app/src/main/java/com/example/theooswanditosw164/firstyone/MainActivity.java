@@ -11,7 +11,7 @@ import android.content.Intent;
 
 public class MainActivity extends Activity implements OnClickListener{
 
-    Button the_button, maps_button;
+    Button the_button, maps_button, newmaps_button, at_test_button, timetable_button;
     TextView the_textview;
     private int i;
 
@@ -27,6 +27,15 @@ public class MainActivity extends Activity implements OnClickListener{
 
         maps_button = (Button)findViewById(R.id.maps_button);
         maps_button.setOnClickListener(this);
+
+        newmaps_button = (Button)findViewById(R.id.newmaps_button);
+        newmaps_button.setOnClickListener(this);
+
+        at_test_button = (Button)findViewById(R.id.at_test_button);
+        at_test_button.setOnClickListener(this);
+
+        timetable_button = (Button)findViewById(R.id.timetable_button);
+        timetable_button.setOnClickListener(this);
 
         the_textview = (TextView)findViewById(R.id.textview);
 
@@ -53,6 +62,16 @@ public class MainActivity extends Activity implements OnClickListener{
             case R.id.maps_button:
                 launch_intent("MapsActivity");
                 break;
+            case R.id.newmaps_button:
+                launch_intent("NewMapActivity");
+                break;
+            case R.id.at_test_button:
+                launch_intent("ATtest");
+                break;
+            case R.id.timetable_button:
+                launch_intent("RoutesForStop");
+                break;
+
         }
     }
 }
