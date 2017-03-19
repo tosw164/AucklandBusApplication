@@ -90,46 +90,26 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
+    private void timetableInformationLogic(){
+        //get value from edittext
+        //put into https://api.at.govt.nz/v2/gtfs/stopTimes/stopId/3330
+        //for each result
+        //save arrival_time, trip_id
+        //create TripArrivalTime object
+        //add trip_id --> TripArrivalTime to map
+
+    }
+
     class getRouteForStopInformation extends AsyncTask<String, Void, JSONObject> {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            HttpURLConnection url_connection = null;
-            try{
-                URL url = new URL("https://api.at.govt.nz/v2/gtfs/routes/stopid/" + params[0]);
-                url_connection = (HttpURLConnection)url.openConnection();
-                url_connection.setRequestProperty("Ocp-Apim-Subscription-Key", "92e47087b5c44366b1b74f96f42632df");
+//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes/stopid/" + params[0]);
+            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes");
+//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/trips");
 
-                // Request not successful
-                if (url_connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    throw new RuntimeException("Request Failed. HTTP Error Code: " + url_connection.getResponseCode());
-                }
-
-                // Read response
-                BufferedReader br = new BufferedReader(new InputStreamReader(url_connection.getInputStream()));
-
-                StringBuffer jsonString = new StringBuffer();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    jsonString.append(line);
-                    System.out.println("LINE:" + line);
-                }
-                br.close();
-                url_connection.disconnect();
-
-                JSONObject json = new JSONObject(jsonString.toString());
-
-                return json;
-
-            } catch (UnknownHostException e){
-                Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-//            } catch(RuntimeException e) {
-//                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
         }
+
 
         @Override
         protected void onPostExecute(JSONObject json) {
@@ -137,20 +117,34 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
             ArrayList<String> to_display = new ArrayList<String>();
 
+            String route_name, route_headsign, arrival_time;
+
             try {
                 if (json.getString("status").equals("OK")){
                     JSONArray responses_array = json.getJSONArray("response");
 
                     for (int i = 0; i < responses_array.length(); i++){
-                        JSONObject route_json = responses_array.getJSONObject(i);
+//                    for (int i = 0; i < 5; i++){
 
-                        String bus_number = route_json.getString("route_short_name");
-                        String bus_number_long = route_json.getString("route_long_name");
+//                        JSONObject incoming_json = responses_array.getJSONObject(i);
 
-                        System.out.println(bus_number + " " + bus_number_long);
-                        to_display.add(bus_number + " " + bus_number_long);
+//                        Log.i(TAG, incoming_json.toString());
+//                        route_name = incoming_json.getString("route_short_name");
+
+
+
+//                        JSONObject tripsbyrouteJSON = new JSONObject(getJSONforLink())
+
+//                        String bus_number = route_json.getString("route_short_name");
+//                        String bus_number_long = route_json.getString("route_long_name");
+
+//                        System.out.println(bus_number + " " + bus_number_long);
+//                        to_display.add(bus_number + " " + bus_number_long);
+
+//                        n++;
 
                     }
+                    to_display.add(" " + responses_array.length());
                     ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RoutesForStop.this, android.R.layout.simple_list_item_1, to_display);
                     some_listview.setAdapter(array_adapter);
 
@@ -159,5 +153,41 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }
+    }
+
+    private JSONObject getJSONforLink(String url_input){
+        HttpURLConnection url_connection = null;
+        try{
+            URL url = new URL(url_input);
+            url_connection = (HttpURLConnection)url.openConnection();
+            url_connection.setRequestProperty("Ocp-Apim-Subscription-Key", "92e47087b5c44366b1b74f96f42632df");
+
+            // Request not successful
+            if (url_connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Request Failed. HTTP Error Code: " + url_connection.getResponseCode());
+            }
+
+            // Read response
+            BufferedReader br = new BufferedReader(new InputStreamReader(url_connection.getInputStream()));
+
+            StringBuffer jsonString = new StringBuffer();
+            String line;
+            while ((line = br.readLine()) != null) {
+                jsonString.append(line);
+                System.out.println("LINE:" + line);
+            }
+            br.close();
+            url_connection.disconnect();
+
+            JSONObject json = new JSONObject(jsonString.toString());
+
+            return json;
+
+        } catch (UnknownHostException e){
+            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
