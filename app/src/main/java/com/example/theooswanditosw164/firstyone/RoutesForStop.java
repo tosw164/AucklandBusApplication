@@ -20,12 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class RoutesForStop extends AppCompatActivity implements View.OnClickListener {
 
@@ -147,10 +143,13 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
                         String headsign = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getTrip_headsign();
 
+                        if (filterTripByTime(arr_time)){
+                            String str_todisplay = shortname + " " + headsign + " " + arr_time;
+//                           System.out.println(str_todisplay);
+                            to_display.add(str_todisplay);
+                        }
 
-                        String str_todisplay = shortname + " " + headsign + " " + arr_time;
-//                        System.out.println(str_todisplay);
-                        to_display.add(str_todisplay);
+//                        filterTripByTime(arr_time);
 
 
 
@@ -164,6 +163,30 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }
+    }
+
+    //ONE HOUR
+    private boolean filterTripByTime(String time){
+
+        Calendar cal = Calendar.getInstance();
+        boolean to_return = true;
+        String[] scheduled_time = time.split(":");
+        int scheduled_hour = Integer.valueOf(scheduled_time[0]);
+
+
+        //LOWER BOUND = 5minutes ago
+//        if
+
+        //UPPER BOUND = 1 hour ahead
+        if (scheduled_hour - cal.get(Calendar.HOUR_OF_DAY) == 0){
+            return true;
+        }
+
+        System.out.println((scheduled_hour - cal.get(Calendar.HOUR)) + "hr" + scheduled_time[0] + "mn" + scheduled_time[1] + "curr" + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
+
+
+
+        return false;
     }
 
     private JSONObject getJSONforLink(String url_input){
