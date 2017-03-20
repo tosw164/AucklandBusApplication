@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.theooswanditosw164.firstyone.atapi.ATapiCall;
+import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,11 +25,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Random;
 
 public class NewMapActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
     private GoogleMap map;
-    Button addline_button, toast_button, current_location_button;
+    Button addline_button, toast_button, current_location_button, test_route_button;
     Random rnd;
     LocationManager location_manager;
 
@@ -53,6 +60,9 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
 
         current_location_button = (Button) findViewById(R.id.current_location_button);
         current_location_button.setOnClickListener(this);
+
+        test_route_button = (Button)findViewById(R.id.attest_test_route_button);
+        test_route_button.setOnClickListener(this);
 
         location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -92,7 +102,7 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
      * Creates a marker at current GPS location, deletes old one if there is one
      * @param latlng coordinate for new marker
      */
-    private void createCurrentLocationMarker(LatLng latlng){
+    private void createLocationMarker(LatLng latlng){
         if (CURRENT_LOCATION_MARKER != null) {
             CURRENT_LOCATION_MARKER.remove();
         }
@@ -106,7 +116,7 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
      * @param lat2
      * @param lng2
      */
-    private void addLine(int lat1, int lng1, int lat2, int lng2) {
+    private void addLine(double lat1, double lng1, double lat2, double lng2) {
         map.addPolyline(new PolylineOptions().geodesic(true)
                 .add(new LatLng(lat1, lng1))
                 .add(new LatLng(lat2, lng2)));
@@ -141,11 +151,53 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
 
         LatLng map_centre = new LatLng(latitude, longitude);
         CameraPosition cam_position = CameraPosition.builder().target(map_centre).zoom(15).build();
-        createCurrentLocationMarker(map_centre);
+        createLocationMarker(map_centre);
 
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cam_position), 1500, null);
 
 
+    }
+
+    class TestRouteWorker extends AsyncTask<Void, Void, JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            final String url_to_use = "https://api.at.govt.nz/v2/gtfs/shapes/tripId/12850045812-20170314155338_v52.16";
+
+            return ATapiCall.fetchJSONfromURL(getBaseContext(), url_to_use);
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            if (json == null){
+                Toast.makeText(getBaseContext(), "Failed to connect to server", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try{
+                if (json.get("status").equals("OK")){
+                    JSONArray responses_array = json.getJSONArray("response");
+
+                    for (int i = 0; i< responses_array.length() - 1; i++ ){
+                        JSONObject current_obj = responses_array.getJSONObject(i);
+                        JSONObject next_obj = responses_array.getJSONObject(i+1);
+
+                        double lat_value1 = current_obj.getDouble("shape_pt_lat");
+                        double lng_value1 = current_obj.getDouble("shape_pt_lon");
+                        double lat_value2 = next_obj.getDouble("shape_pt_lat");
+                        double lng_value2 = next_obj.getDouble("shape_pt_lon");
+
+
+                        addLine(lat_value1, lng_value1, lat_value2, lng_value2);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            ToastMessage.makeToast(getBaseContext(), "done");
+
+        }
     }
 
     @Override
@@ -174,6 +226,11 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
             case R.id.current_location_button:
 //                map.getMyLocation();
                 moveToCurrentLocation();
+                break;
+
+            case R.id.attest_test_route_button:
+                new TestRouteWorker().execute();
+                System.out.println("testroute");
                 break;
         }
 
