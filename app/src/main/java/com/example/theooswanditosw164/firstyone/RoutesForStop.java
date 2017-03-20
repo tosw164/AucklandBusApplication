@@ -13,6 +13,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.theooswanditosw164.firstyone.atapi.ATapiCall;
+import com.example.theooswanditosw164.firstyone.dataclasses.HashMapContainers;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,8 +74,8 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
     private void getButtonLogic(){
         String edittext_value = stopnumber_input.getText().toString();
-        Log.i(TAG, "Hello World");
-        Log.i(TAG, edittext_value);
+//        Log.i(TAG, "Hello World");
+//        Log.i(TAG, edittext_value);
 
         if (validateEditTextInput(edittext_value)){
             new getRouteForStopInformation().execute(edittext_value);
@@ -105,7 +108,8 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
         @Override
         protected JSONObject doInBackground(String... params) {
 //            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes/stopid/" + params[0]);
-            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes");
+            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/stopTimes/stopId/" + params[0]);
+//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes");
 //            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/trips");
 
         }
@@ -113,6 +117,11 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onPostExecute(JSONObject json) {
+            if (json == null){
+                Toast.makeText(getBaseContext(), "Failed to connect to server", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             ListView some_listview = (ListView)findViewById(R.id.routesbystop_listview);
 
             ArrayList<String> to_display = new ArrayList<String>();
@@ -126,22 +135,24 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
                     for (int i = 0; i < responses_array.length(); i++){
 //                    for (int i = 0; i < 5; i++){
 
-//                        JSONObject incoming_json = responses_array.getJSONObject(i);
+                        JSONObject incoming_json = responses_array.getJSONObject(i);
 
 //                        Log.i(TAG, incoming_json.toString());
-//                        route_name = incoming_json.getString("route_short_name");
+
+                        String arr_time = incoming_json.getString("arrival_time");
+                        String tripid = incoming_json.getString("trip_id");
+
+                        String routeid = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getRoute_id();
+                        String shortname = HashMapContainers.getInstance(getBaseContext()).route_id_BusRoute_link.get(routeid).getShort_name();
+
+                        String headsign = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getTrip_headsign();
 
 
+                        String str_todisplay = shortname + " " + headsign + " " + arr_time;
+//                        System.out.println(str_todisplay);
+                        to_display.add(str_todisplay);
 
-//                        JSONObject tripsbyrouteJSON = new JSONObject(getJSONforLink())
 
-//                        String bus_number = route_json.getString("route_short_name");
-//                        String bus_number_long = route_json.getString("route_long_name");
-
-//                        System.out.println(bus_number + " " + bus_number_long);
-//                        to_display.add(bus_number + " " + bus_number_long);
-
-//                        n++;
 
                     }
                     to_display.add(" " + responses_array.length());
@@ -156,38 +167,6 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
     }
 
     private JSONObject getJSONforLink(String url_input){
-        HttpURLConnection url_connection = null;
-        try{
-            URL url = new URL(url_input);
-            url_connection = (HttpURLConnection)url.openConnection();
-            url_connection.setRequestProperty("Ocp-Apim-Subscription-Key", "92e47087b5c44366b1b74f96f42632df");
-
-            // Request not successful
-            if (url_connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException("Request Failed. HTTP Error Code: " + url_connection.getResponseCode());
-            }
-
-            // Read response
-            BufferedReader br = new BufferedReader(new InputStreamReader(url_connection.getInputStream()));
-
-            StringBuffer jsonString = new StringBuffer();
-            String line;
-            while ((line = br.readLine()) != null) {
-                jsonString.append(line);
-                System.out.println("LINE:" + line);
-            }
-            br.close();
-            url_connection.disconnect();
-
-            JSONObject json = new JSONObject(jsonString.toString());
-
-            return json;
-
-        } catch (UnknownHostException e){
-            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return ATapiCall.fetchJSONfromURL(getBaseContext(), url_input);
     }
 }

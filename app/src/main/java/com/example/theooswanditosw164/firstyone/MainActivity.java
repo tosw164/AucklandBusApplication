@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.content.Intent;
 
+import com.example.theooswanditosw164.firstyone.dataclasses.HashMapContainers;
+
 
 public class MainActivity extends Activity implements OnClickListener{
 
@@ -39,6 +41,7 @@ public class MainActivity extends Activity implements OnClickListener{
 
         the_textview = (TextView)findViewById(R.id.textview);
 
+        HashMapContainers.getInstance(getBaseContext());
     }
 
     private void launch_intent(String layout_tag){
@@ -58,6 +61,7 @@ public class MainActivity extends Activity implements OnClickListener{
             case R.id.button:
                 i++;
                 the_textview.setText("current count: " + i);
+                HashMapContainers.getInstance(getBaseContext()).test();
                 break;
             case R.id.maps_button:
                 launch_intent("MapsActivity");

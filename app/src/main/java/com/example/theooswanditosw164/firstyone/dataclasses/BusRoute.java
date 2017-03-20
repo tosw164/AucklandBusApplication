@@ -6,9 +6,11 @@ package com.example.theooswanditosw164.firstyone.dataclasses;
 
 public class BusRoute {
 
-    private String short_name, long_name;
+    private String short_name, long_name, route_id;
 
-    public BusRoute(String s_name, String l_name){
+
+    public BusRoute(String id, String s_name, String l_name){
+        this.route_id = id;
         this.short_name = s_name;
         this.long_name = l_name;
     }
@@ -21,5 +23,10 @@ public class BusRoute {
         return long_name;
     }
 
+    public String getRoute_id() { return route_id; }
 
+    @Override
+    public String toString() {
+        return (short_name + " " + route_id + " " + long_name);
+    }
 }
