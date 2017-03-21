@@ -174,13 +174,15 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
                 return;
             }
 
+            final int LENGTH_JUMP = 8;
+
             try{
                 if (json.get("status").equals("OK")){
                     JSONArray responses_array = json.getJSONArray("response");
 
-                    for (int i = 0; i< responses_array.length() - 1; i++ ){
+                    for (int i = 0; i< responses_array.length() - LENGTH_JUMP; i+=LENGTH_JUMP ){
                         JSONObject current_obj = responses_array.getJSONObject(i);
-                        JSONObject next_obj = responses_array.getJSONObject(i+1);
+                        JSONObject next_obj = responses_array.getJSONObject(i+LENGTH_JUMP);
 
                         double lat_value1 = current_obj.getDouble("shape_pt_lat");
                         double lng_value1 = current_obj.getDouble("shape_pt_lon");
