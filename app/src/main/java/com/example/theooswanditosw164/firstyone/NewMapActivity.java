@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
@@ -36,6 +37,7 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
     Button addline_button, toast_button, current_location_button, test_route_button;
     Random rnd;
     LocationManager location_manager;
+    Polyline route_line;
 
     private static final int MY_PERMISSION_ACCESS_LOCATION = 0;
     private static Marker CURRENT_LOCATION_MARKER = null;
@@ -174,28 +176,30 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
                 return;
             }
 
-            final int LENGTH_JUMP = 8;
+            PolylineOptions route_line_options = new PolylineOptions();
 
+//TODO do one polyline - Sam
             try{
                 if (json.get("status").equals("OK")){
                     JSONArray responses_array = json.getJSONArray("response");
 
-                    for (int i = 0; i< responses_array.length() - LENGTH_JUMP; i+=LENGTH_JUMP ){
+                    for (int i = 0; i< responses_array.length(); i++ ){
                         JSONObject current_obj = responses_array.getJSONObject(i);
-                        JSONObject next_obj = responses_array.getJSONObject(i+LENGTH_JUMP);
 
-                        double lat_value1 = current_obj.getDouble("shape_pt_lat");
-                        double lng_value1 = current_obj.getDouble("shape_pt_lon");
-                        double lat_value2 = next_obj.getDouble("shape_pt_lat");
-                        double lng_value2 = next_obj.getDouble("shape_pt_lon");
+                        double lat_value = current_obj.getDouble("shape_pt_lat");
+                        double lng_value = current_obj.getDouble("shape_pt_lon");
 
+                        route_line_options.add(new LatLng(lat_value, lng_value));
 
-                        addLine(lat_value1, lng_value1, lat_value2, lng_value2);
                     }
+
+                    route_line = map.addPolyline(route_line_options);
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
 
             ToastMessage.makeToast(getBaseContext(), "done");
 
