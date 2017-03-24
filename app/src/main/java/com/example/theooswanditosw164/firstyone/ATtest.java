@@ -22,7 +22,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class ATtest extends AppCompatActivity implements View.OnClickListener {
-    private static final int STOP_NUMBER = 3330; //TODO bus stop number here
+    private static final int STOP_NUMBER = 7147; //TODO bus stop number here
 
     private static final String TAG = RoutesForStop.class.getSimpleName();
     private static final int ROUTES_SELECTED = 0;
@@ -150,11 +150,13 @@ public class ATtest extends AppCompatActivity implements View.OnClickListener {
                 for (int i = 0; i < responses_array.length(); i++){
                     JSONObject route_json = responses_array.getJSONObject(i);
 
-                    String bus_number = route_json.getString("trip_id");
-                    String bus_number_long = route_json.getString("arrival_time");
+                    String short_name = route_json.getString("route_short_name");
+                    String trip_headsign = route_json.getString("trip_headsign");
+                    String departure_time = route_json.getString("departure_time");
 
-                    System.out.println(bus_number + " " + bus_number_long);
-                    to_display.add(bus_number + " " + bus_number_long);
+
+                    System.out.println(short_name + " " + trip_headsign + " " + departure_time);
+                    to_display.add(short_name + " " + trip_headsign + " " + departure_time);
 
                 }
                 ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(ATtest.this, android.R.layout.simple_list_item_1, to_display);
@@ -176,7 +178,7 @@ public class ATtest extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.attest_timetable_button:
                 SELECTED_BUTTON = TIMETABLE_SELECTED;
-                timetableByStopFunctionality("https://api.at.govt.nz/v2/gtfs/stopTimes/stopId/" + STOP_NUMBER);
+                timetableByStopFunctionality("https://api.at.govt.nz/v2/gtfs/stops/stopinfo/" + STOP_NUMBER);
                 break;
         }
     }

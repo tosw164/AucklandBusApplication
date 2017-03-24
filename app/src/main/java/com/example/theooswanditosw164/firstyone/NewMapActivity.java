@@ -79,9 +79,6 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
             // for ActivityCompat#requestPermissions for more details.
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_ACCESS_LOCATION);
-
-//            Toast.makeText(getApplicationContext(), "No Location Permisson", Toast.LENGTH_LONG).show();
-
             return;
         }
 
