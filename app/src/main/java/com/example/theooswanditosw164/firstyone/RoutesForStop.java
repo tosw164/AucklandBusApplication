@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Interpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,7 +14,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.theooswanditosw164.firstyone.atapi.ATapiCall;
-import com.example.theooswanditosw164.firstyone.dataclasses.HashMapContainers;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -124,7 +122,7 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
             ArrayList<String> to_display = new ArrayList<String>();
 
-            String route_name, route_headsign, arrival_time;
+            String short_name, trip_headsign, arr_time;
 
             try {
                 if (json.getString("status").equals("OK")){
@@ -137,18 +135,9 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
 //                        Log.i(TAG, incoming_json.toString());
 
-//                        String arr_time = incoming_json.getString("arrival_time");
-//                        String tripid = incoming_json.getString("trip_id");
-//
-//                        String routeid = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getRoute_id();
-//                        String shortname = HashMapContainers.getInstance(getBaseContext()).route_id_BusRoute_link.get(routeid).getShort_name();
-//
-//                        String headsign = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getTrip_headsign();
-
-
-                        String short_name = incoming_json.getString("route_short_name");
-                        String trip_headsign = incoming_json.getString("trip_headsign");
-                        String arr_time = incoming_json.getString("departure_time");
+                        short_name = incoming_json.getString("route_short_name");
+                        trip_headsign = incoming_json.getString("trip_headsign");
+                        arr_time = incoming_json.getString("departure_time");
 
                         if (filterTripByTime(arr_time)){
 //                        if(true){
@@ -157,7 +146,6 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
                             to_display.add(str_todisplay);
                         }
 
-//                        filterTripByTime(arr_time);
 
 
 
@@ -185,11 +173,6 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
         int current_hour = cal.get(Calendar.HOUR_OF_DAY);
         int current_minute = cal.get(Calendar.MINUTE);
 
-
-        //LOWER BOUND = 5minutes ago
-//        if
-
-        //UPPER BOUND = 1 hour ahead
         if (scheduled_hour == current_hour){
             if (scheduled_minute < current_minute){
                 return false;
