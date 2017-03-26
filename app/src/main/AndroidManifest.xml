@@ -43,7 +43,8 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".NewMapActivity" />
         <activity android:name=".ATtest" />
-        <activity android:name=".RoutesForStop"></activity>
+        <activity android:name=".RoutesForStop" />
+        <activity android:name=".RouteOnMap"></activity>
     </application>
 
 </manifest>
