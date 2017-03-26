@@ -137,7 +137,7 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
                         short_name = incoming_json.getString("route_short_name");
                         trip_headsign = incoming_json.getString("trip_headsign");
-                        arr_time = incoming_json.getString("departure_time");
+                        arr_time = removeSecondsFromTime(incoming_json.getString("departure_time"));
 
                         if (filterTripByTime(arr_time)){
 //                        if(true){
@@ -159,6 +159,11 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }
+    }
+
+    private String removeSecondsFromTime(String initial_time){
+        String[] split_time = initial_time.split(":");
+        return split_time[0] + ":" + split_time[1];
     }
 
     //ONE HOUR
