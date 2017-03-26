@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Interpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -104,11 +105,12 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
         @Override
         protected JSONObject doInBackground(String... params) {
 //            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes/stopid/" + params[0]);
-            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/stopTimes/stopId/" + params[0]);
+//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/stopTimes/stopId/" + params[0]);
 //            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes");
 //            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/trips");
-
+            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/stops/stopinfo/" + params[0]);
         }
+
 
 
         @Override
@@ -135,16 +137,22 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
 //                        Log.i(TAG, incoming_json.toString());
 
-                        String arr_time = incoming_json.getString("arrival_time");
-                        String tripid = incoming_json.getString("trip_id");
+//                        String arr_time = incoming_json.getString("arrival_time");
+//                        String tripid = incoming_json.getString("trip_id");
+//
+//                        String routeid = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getRoute_id();
+//                        String shortname = HashMapContainers.getInstance(getBaseContext()).route_id_BusRoute_link.get(routeid).getShort_name();
+//
+//                        String headsign = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getTrip_headsign();
 
-                        String routeid = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getRoute_id();
-                        String shortname = HashMapContainers.getInstance(getBaseContext()).route_id_BusRoute_link.get(routeid).getShort_name();
 
-                        String headsign = HashMapContainers.getInstance(getBaseContext()).trip_id_BusTrip_link.get(tripid).getTrip_headsign();
+                        String short_name = incoming_json.getString("route_short_name");
+                        String trip_headsign = incoming_json.getString("trip_headsign");
+                        String arr_time = incoming_json.getString("departure_time");
 
                         if (filterTripByTime(arr_time)){
-                            String str_todisplay = shortname + " " + headsign + " " + arr_time;
+//                        if(true){
+                            String str_todisplay = short_name + " " + trip_headsign + " " + arr_time;
 //                           System.out.println(str_todisplay);
                             to_display.add(str_todisplay);
                         }
@@ -172,21 +180,25 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
         boolean to_return = true;
         String[] scheduled_time = time.split(":");
         int scheduled_hour = Integer.valueOf(scheduled_time[0]);
+        int scheduled_minute = Integer.valueOf(scheduled_time[1]);
+
+        int current_hour = cal.get(Calendar.HOUR_OF_DAY);
+        int current_minute = cal.get(Calendar.MINUTE);
 
 
         //LOWER BOUND = 5minutes ago
 //        if
 
         //UPPER BOUND = 1 hour ahead
-        if (scheduled_hour - cal.get(Calendar.HOUR_OF_DAY) == 0){
-            return true;
+        if (scheduled_hour == current_hour){
+            if (scheduled_minute < current_minute){
+                return false;
+            }
+
         }
 
-        System.out.println((scheduled_hour - cal.get(Calendar.HOUR)) + "hr" + scheduled_time[0] + "mn" + scheduled_time[1] + "curr" + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
-
-
-
-        return false;
+        System.out.println((scheduled_hour - cal.get(Calendar.HOUR_OF_DAY)) + "hr" + scheduled_time[0] + "mn" + scheduled_time[1] + "curr" + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
+        return true;
     }
 
     private JSONObject getJSONforLink(String url_input){
