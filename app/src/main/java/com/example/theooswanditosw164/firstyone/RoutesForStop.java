@@ -182,7 +182,6 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
             if (scheduled_minute < current_minute){
                 return false;
             }
-
         }
 
         System.out.println((scheduled_hour - cal.get(Calendar.HOUR_OF_DAY)) + "hr" + scheduled_time[0] + "mn" + scheduled_time[1] + "curr" + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
