@@ -20,19 +20,19 @@ public class BusTripArrivalRealtime {
         this.destination_display = dest_disp;
     }
 
-    public void setScheduledArrivalTime(String scheduled_arrival_time) {
-        this.scheduled_arrival_time = scheduled_arrival_time;
+    public String getScheduledArrivalTime() {
+        return scheduled_arrival_time;
     }
 
-    public void setEstimatedArrivalTime(String estimated_arrival_time) {
-        this.estimated_arrival_time = estimated_arrival_time;
+    public String getEstimatedArrivalTime() {
+        return estimated_arrival_time;
     }
 
-    public void setRouteShortName(String route_short_name) {
-        this.route_short_name = route_short_name;
+    public String getRouteShortName() {
+        return route_short_name;
     }
 
-    public void setDestinationDisplay(String destination_display) {
-        this.destination_display = destination_display;
+    public String getDestinationDisplay() {
+        return destination_display;
     }
 }
