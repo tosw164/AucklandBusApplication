@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,9 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
     EditText stopnumber_input;
     Button get_button;
+    ListView some_listview;
+    ArrayList<String> current_list_contents;
+
 
     private static final String TAG = RoutesForStop.class.getSimpleName();
 
@@ -55,6 +59,15 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
         get_button = (Button)findViewById(R.id.routesbystop_button);
         get_button.setOnClickListener(this);
 
+        some_listview = (ListView)findViewById(R.id.routesbystop_listview);
+        some_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "pos" + current_list_contents.get(position));
+            }
+
+        });
     }
 
 
@@ -88,16 +101,6 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
-    private void timetableInformationLogic(){
-        //get value from edittext
-        //put into https://api.at.govt.nz/v2/gtfs/stopTimes/stopId/3330
-        //for each result
-        //save arrival_time, trip_id
-        //create TripArrivalTime object
-        //add trip_id --> TripArrivalTime to map
-
-    }
-
     class getRouteForStopInformation extends AsyncTask<String, Void, JSONObject> {
 
         @Override
@@ -118,9 +121,8 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
                 return;
             }
 
-            ListView some_listview = (ListView)findViewById(R.id.routesbystop_listview);
 
-            ArrayList<String> to_display = new ArrayList<String>();
+            current_list_contents = new ArrayList<String>();
 
             String short_name, trip_headsign, arr_time;
 
@@ -143,15 +145,13 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 //                        if(true){
                             String str_todisplay = short_name + " " + trip_headsign + " " + arr_time;
 //                           System.out.println(str_todisplay);
-                            to_display.add(str_todisplay);
+                            current_list_contents.add(str_todisplay);
                         }
 
 
-
-
                     }
-                    to_display.add(" " + responses_array.length());
-                    ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RoutesForStop.this, android.R.layout.simple_list_item_1, to_display);
+                    current_list_contents.add(" " + responses_array.length());
+                    ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RoutesForStop.this, android.R.layout.simple_list_item_1, current_list_contents);
                     some_listview.setAdapter(array_adapter);
 
                 }
