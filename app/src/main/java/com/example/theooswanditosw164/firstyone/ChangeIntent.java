@@ -16,8 +16,8 @@ public class ChangeIntent {
 
         } catch (ClassNotFoundException e){
             e.printStackTrace();
+            return null;
         }
-
         return new Intent(current_activity, my_class);
     }
 }
