@@ -1,8 +1,6 @@
 package com.example.theooswanditosw164.firstyone.atapi;
 
-import android.app.Activity;
 import android.content.Context;
-import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -10,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 /**
  * Created by theooswanditosw164 on 19/03/17.
@@ -50,4 +47,6 @@ public class ATapiCall {
         }
         return null;
     }
+
+//    public static JSONObject fetchJSON
 }
