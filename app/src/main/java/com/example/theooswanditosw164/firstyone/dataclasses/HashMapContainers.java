@@ -78,7 +78,7 @@ public class HashMapContainers {
     private void populateBusTrips(Context c) {
 
         try {
-            JSONObject all_trips = ATapiCall.fetchJSONfromURL(c, "https://api.at.govt.nz/v2/gtfs/trips");
+            JSONObject all_trips = ATapiCall.fetchJSONfromURLwithSubKey(c, "https://api.at.govt.nz/v2/gtfs/trips");
 
             if (all_trips == null){
                 ToastMessage.makeToast(c, "Could not connect to server");
@@ -112,7 +112,7 @@ public class HashMapContainers {
 
     private void populateBusRoutes(Context c) {
         try {
-            JSONObject all_trips = ATapiCall.fetchJSONfromURL(c, "https://api.at.govt.nz/v2/gtfs/routes");
+            JSONObject all_trips = ATapiCall.fetchJSONfromURLwithSubKey(c, "https://api.at.govt.nz/v2/gtfs/routes");
 
             if (all_trips == null){
                 ToastMessage.makeToast(c, "Could not connect to server");

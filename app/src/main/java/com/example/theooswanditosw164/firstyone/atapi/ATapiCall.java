@@ -14,7 +14,7 @@ import java.net.URL;
  */
 
 public class ATapiCall {
-    public static JSONObject fetchJSONfromURL(Context contxt, String url_input){
+    public static JSONObject fetchJSONfromURLwithSubKey(Context contxt, String url_input){
         HttpURLConnection url_connection = null;
         try{
             URL url = new URL(url_input);
@@ -33,7 +33,40 @@ public class ATapiCall {
             String line;
             while ((line = br.readLine()) != null) {
                 jsonString.append(line);
-//                System.out.println("LINE:" + line);
+                System.out.println("LINE:" + line);
+            }
+            br.close();
+            url_connection.disconnect();
+
+            JSONObject json = new JSONObject(jsonString.toString());
+
+            return json;
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JSONObject fetchJSONfromURL(Context contxt, String url_input){
+        HttpURLConnection url_connection = null;
+        try{
+            URL url = new URL(url_input);
+            url_connection = (HttpURLConnection)url.openConnection();
+
+            // Request not successful
+            if (url_connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Request Failed. HTTP Error Code: " + url_connection.getResponseCode());
+            }
+
+            // Read response
+            BufferedReader br = new BufferedReader(new InputStreamReader(url_connection.getInputStream()));
+
+            StringBuffer jsonString = new StringBuffer();
+            String line;
+            while ((line = br.readLine()) != null) {
+                jsonString.append(line);
+                System.out.println("LINE:" + line);
             }
             br.close();
             url_connection.disconnect();

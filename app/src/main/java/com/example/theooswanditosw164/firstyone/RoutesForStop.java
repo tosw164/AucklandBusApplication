@@ -189,6 +189,6 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
     }
 
     private JSONObject getJSONforLink(String url_input){
-        return ATapiCall.fetchJSONfromURL(getBaseContext(), url_input);
+        return ATapiCall.fetchJSONfromURLwithSubKey(getBaseContext(), url_input);
     }
 }

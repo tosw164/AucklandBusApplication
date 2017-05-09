@@ -163,7 +163,7 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
         protected JSONObject doInBackground(Void... params) {
             final String url_to_use = "https://api.at.govt.nz/v2/gtfs/shapes/tripId/12850045812-20170314155338_v52.16";
 
-            return ATapiCall.fetchJSONfromURL(getBaseContext(), url_to_use);
+            return ATapiCall.fetchJSONfromURLwithSubKey(getBaseContext(), url_to_use);
         }
 
         @Override
