@@ -12,4 +12,14 @@ public class AtApiRequests extends ATapiCall{
         String url_to_use =  "https://api.at.govt.nz/v2/gtfs/trips";
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
+
+    public static JSONObject getRoutesInformationFromStopNumber(Context c, int stop_number){
+        String url_to_use = "https://api.at.govt.nz/v2/gtfs/routes/stopid/" + stop_number;
+        return fetchJSONfromURLwithSubKey(c, url_to_use);
+    }
+
+    public static JSONObject getTimetableInformaitonFromStopNumber(Context c, int stop_number){
+        String url_to_use = "https://api.at.govt.nz/v2/gtfs/stops/stopinfo/" + stop_number;
+        return fetchJSONfromURLwithSubKey(c, url_to_use);
+    }
 }
