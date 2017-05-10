@@ -93,7 +93,7 @@ public class NewMapActivity extends FragmentActivity implements OnMapReadyCallba
         LatLng sydney = new LatLng(-34, 151);
         map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").snippet("This is a snippet"));
         map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        map.setMyLocationEnabled(true);
+        map.setMyLocationEnabled(true); //TODO make sure this is safe
 
     }
 
