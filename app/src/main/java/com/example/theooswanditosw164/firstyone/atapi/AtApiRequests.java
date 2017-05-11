@@ -23,7 +23,7 @@ public class AtApiRequests extends ATapiCall{
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
 
-    public static JSONObject getRouteLocationDataFromTripID(Context c, String trip_id){
+    public static JSONObject getRouteShapeDataFromTripID(Context c, String trip_id){
         String url_to_use = "https://api.at.govt.nz/v2/gtfs/shapes/tripId/" + trip_id;
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
