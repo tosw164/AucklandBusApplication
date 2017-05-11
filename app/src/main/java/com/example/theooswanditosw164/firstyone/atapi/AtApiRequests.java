@@ -27,4 +27,12 @@ public class AtApiRequests extends ATapiCall{
         String url_to_use = "https://api.at.govt.nz/v2/gtfs/shapes/tripId/" + trip_id;
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
+
+    public static JSONObject getRealtimeTimetableFromStopNumber(Context c, int stop_number, int hours){
+        String url_to_use = "https://api.at.govt.nz/v2/public-restricted/" +
+                "departures/" + stop_number + "?" +
+                "subscription-key=323741614c1c4b9083299adefe100aa6" +
+                "&hours=" + hours;
+        return fetchJSONfromURL(c, url_to_use);
+    }
 }

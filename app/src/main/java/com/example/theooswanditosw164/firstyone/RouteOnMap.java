@@ -61,7 +61,7 @@ public class RouteOnMap extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        map.setMyLocationEnabled(true);
+        map.setMyLocationEnabled(true); //TODO make safe
 
     }
 
