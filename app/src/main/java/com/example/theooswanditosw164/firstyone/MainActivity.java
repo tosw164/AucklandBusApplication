@@ -27,18 +27,23 @@ public class MainActivity extends Activity implements OnClickListener{
 
         the_button = (Button)findViewById(R.id.button);
         the_button.setOnClickListener(this);
+        the_button.setText("Hello");
 
         maps_button = (Button)findViewById(R.id.maps_button);
         maps_button.setOnClickListener(this);
+        maps_button.setText("HelloWorld GoogleMaps example");
 
         newmaps_button = (Button)findViewById(R.id.newmaps_button);
         newmaps_button.setOnClickListener(this);
+        newmaps_button.setText("MapsView random functionality testing");
 
         at_test_button = (Button)findViewById(R.id.at_test_button);
         at_test_button.setOnClickListener(this);
+        at_test_button.setText("AT test, Routes and timetable information");
 
         timetable_button = (Button)findViewById(R.id.timetable_button);
         timetable_button.setOnClickListener(this);
+        timetable_button.setText("Stop & Route information by stopnumber input");
 
         the_textview = (TextView)findViewById(R.id.textview);
 
