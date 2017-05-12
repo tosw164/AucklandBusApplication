@@ -8,13 +8,17 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -89,13 +93,43 @@ public class RealtimeTimetable extends AppCompatActivity  implements View.OnClic
 
     class getRealtimeTimetableInformation extends AsyncTask<String, Void, JSONObject>{
         @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
+        protected JSONObject doInBackground(String... params) {
+            return AtApiRequests.getRealtimeTimetableFromStopNumber(getBaseContext(), params[0], "1");
         }
 
         @Override
-        protected JSONObject doInBackground(String... params) {
-            return null;
+        protected void onPostExecute(JSONObject json) {
+            if (json == null){
+                ToastMessage.makeToast(getBaseContext(), "Failed to connect to server");
+            }
+
+            timetable_contents = new ArrayList<String>();
+
+            String shortname, destination, time;
+
+            try{
+                if (json.getString("status").equals("OK")){
+                    JSONObject responses = json.getJSONObject("response");
+                    JSONArray movements = responses.getJSONArray("movements");
+                    for(int i = 0; i < movements.length(); i++){
+                        JSONObject move = movements.getJSONObject(i);
+//                        Log.i(TAG, "" + move.get("route_short_name"));
+                        timetable_contents.add("" + move.get("route_short_name") +
+                                "\t" + move.get("destinationDisplay") +
+                                "\t" + move.get("scheduledArrivalTime").toString() +
+                                " " + move.get("expectedArrivalTime").toString());
+                    }
+
+                    timetable_contents.add(" " + movements.length());
+                    ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RealtimeTimetable.this, android.R.layout.simple_list_item_1, timetable_contents);
+                    timetable_listview.setAdapter(array_adapter);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
         }
     }
 
