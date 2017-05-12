@@ -116,8 +116,8 @@ public class RealtimeTimetable extends AppCompatActivity  implements View.OnClic
 //                        Log.i(TAG, "" + move.get("route_short_name"));
                         timetable_contents.add("" + move.get("route_short_name") +
                                 "\t" + move.get("destinationDisplay") +
-                                "\t" + move.get("scheduledArrivalTime").toString() +
-                                " " + move.get("expectedArrivalTime").toString());
+                                "\t" + formatTime(move.get("scheduledArrivalTime").toString()) +
+                                " " + formatTime(move.get("expectedArrivalTime").toString()));
                     }
 
                     timetable_contents.add(" " + movements.length());
@@ -132,6 +132,18 @@ public class RealtimeTimetable extends AppCompatActivity  implements View.OnClic
 
         }
     }
+
+    private String formatTime(String raw){
+        if(raw == null){
+            return "";
+        }
+        if(raw.contains("T")){
+            String to_return = raw.split("T")[1];
+            return to_return.substring(0,5);
+        }
+        return "";
+    }
+
 
     @Override
     public void onClick(View v) {
