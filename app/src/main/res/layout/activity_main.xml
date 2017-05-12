@@ -31,6 +31,13 @@
             android:layout_height="wrap_content"
             android:text="AT Test" />
 
+        <Button
+            android:id="@+id/realtimeboard_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Realtime board" />
+
+
     </LinearLayout>
 
     <LinearLayout

@@ -33,6 +33,8 @@ public class RealtimeTimetable extends AppCompatActivity  implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime_timetable);
 
+        timetable_contents = new ArrayList<String>();
+
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         stop_number_input = (EditText) findViewById(R.id.realtime_board_edittext);
@@ -54,7 +56,7 @@ public class RealtimeTimetable extends AppCompatActivity  implements View.OnClic
         get_button = (Button) findViewById(R.id.realtime_board_button);
         get_button.setOnClickListener(this);
 
-        timetable_listview = (ListView) findViewById(R.id.attest_timetable_listview);
+        timetable_listview = (ListView) findViewById(R.id.realtime_board_listview);
         timetable_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
