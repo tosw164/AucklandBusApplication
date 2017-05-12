@@ -135,22 +135,18 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
                     JSONArray responses_array = json.getJSONArray("response");
 
                     for (int i = 0; i < responses_array.length(); i++){
-//                    for (int i = 0; i < 5; i++){
 
                         JSONObject incoming_json = responses_array.getJSONObject(i);
 
-//                        Log.i(TAG, incoming_json.toString());
 
                         short_name = incoming_json.getString("route_short_name");
                         trip_headsign = incoming_json.getString("trip_headsign");
                         arr_time = removeSecondsFromTime(incoming_json.getString("departure_time"));
 
-                        if (filterTripByTime(arr_time)){
-//                        if(true){
+//                        if (filterTripByTime(arr_time)){
                             String str_todisplay = short_name + " " + trip_headsign + " " + arr_time;
-//                           System.out.println(str_todisplay);
                             current_list_contents.add(str_todisplay);
-                        }
+//                        }
 
 
                     }
@@ -171,28 +167,25 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
     }
 
     //ONE HOUR
-    private boolean filterTripByTime(String time){
+//    private boolean filterTripByTime(String time){
+//
+//        Calendar cal = Calendar.getInstance();
+//        boolean to_return = true;
+//        String[] scheduled_time = time.split(":");
+//        int scheduled_hour = Integer.valueOf(scheduled_time[0]);
+//        int scheduled_minute = Integer.valueOf(scheduled_time[1]);
+//
+//        int current_hour = cal.get(Calendar.HOUR_OF_DAY);
+//        int current_minute = cal.get(Calendar.MINUTE);
+//
+//        if (scheduled_hour == current_hour){
+//            if (scheduled_minute < current_minute){
+//                return false;
+//            }
+//        }
+//
+//        System.out.println((scheduled_hour - cal.get(Calendar.HOUR_OF_DAY)) + "hr" + scheduled_time[0] + "mn" + scheduled_time[1] + "curr" + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
+//        return true;
+//    }
 
-        Calendar cal = Calendar.getInstance();
-        boolean to_return = true;
-        String[] scheduled_time = time.split(":");
-        int scheduled_hour = Integer.valueOf(scheduled_time[0]);
-        int scheduled_minute = Integer.valueOf(scheduled_time[1]);
-
-        int current_hour = cal.get(Calendar.HOUR_OF_DAY);
-        int current_minute = cal.get(Calendar.MINUTE);
-
-        if (scheduled_hour == current_hour){
-            if (scheduled_minute < current_minute){
-                return false;
-            }
-        }
-
-        System.out.println((scheduled_hour - cal.get(Calendar.HOUR_OF_DAY)) + "hr" + scheduled_time[0] + "mn" + scheduled_time[1] + "curr" + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
-        return true;
-    }
-
-    private JSONObject getJSONforLink(String url_input){
-        return ATapiCall.fetchJSONfromURLwithSubKey(getBaseContext(), url_input);
-    }
 }
