@@ -13,12 +13,12 @@ public class AtApiRequests extends ATapiCall{
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
 
-    public static JSONObject getRoutesInformationFromStopNumber(Context c, int stop_number){
+    public static JSONObject getRoutesInformationFromStopNumber(Context c, String stop_number){
         String url_to_use = "https://api.at.govt.nz/v2/gtfs/routes/stopid/" + stop_number;
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
 
-    public static JSONObject getTimetableInformaitonFromStopNumber(Context c, int stop_number){
+    public static JSONObject getTimetableInformaitonFromStopNumber(Context c, String stop_number){
         String url_to_use = "https://api.at.govt.nz/v2/gtfs/stops/stopinfo/" + stop_number;
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
@@ -28,7 +28,7 @@ public class AtApiRequests extends ATapiCall{
         return fetchJSONfromURLwithSubKey(c, url_to_use);
     }
 
-    public static JSONObject getRealtimeTimetableFromStopNumber(Context c, int stop_number, int hours){
+    public static JSONObject getRealtimeTimetableFromStopNumber(Context c, String stop_number, String hours){
         String url_to_use = "https://api.at.govt.nz/v2/public-restricted/" +
                 "departures/" + stop_number + "?" +
                 "subscription-key=323741614c1c4b9083299adefe100aa6" +

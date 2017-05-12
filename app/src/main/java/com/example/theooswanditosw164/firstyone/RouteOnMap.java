@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.theooswanditosw164.firstyone.atapi.ATapiCall;
+import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -87,9 +88,10 @@ public class RouteOnMap extends FragmentActivity implements OnMapReadyCallback {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            final String url_to_use = "https://api.at.govt.nz/v2/gtfs/shapes/tripId/" + params[0];
+//            final String url_to_use = "https://api.at.govt.nz/v2/gtfs/shapes/tripId/" + params[0];
 
-            return ATapiCall.fetchJSONfromURLwithSubKey(getBaseContext(), url_to_use);
+            return AtApiRequests.getRouteShapeDataFromTripID(getBaseContext(), params[0]);
+//            return ATapiCall.fetchJSONfromURLwithSubKey(getBaseContext(), url_to_use);
         }
 
         @Override
