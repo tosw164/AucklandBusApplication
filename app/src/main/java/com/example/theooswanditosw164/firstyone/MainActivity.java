@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements OnClickListener{
             case R.id.button:
                 i++;
                 the_textview.setText("current count: " + i);
-                HashMapContainers.getInstance(getBaseContext()).test();
+//                HashMapContainers.getInstance(getBaseContext()).test();
 //                AtApiRequests.printAllTrips(getBaseContext());
                 break;
             case R.id.maps_button:
