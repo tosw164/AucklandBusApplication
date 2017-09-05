@@ -6,19 +6,37 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
+import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 /**
  * Created by TheoOswandi on 5/09/2017.
@@ -50,7 +68,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         fab1 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab1);
         fab1.setOnClickListener(this);
 
-        fab2= (FloatingActionButton) findViewById(R.id.stopsonmap_fab2);
+        fab2 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab2);
         fab2.setOnClickListener(this);
 
         fab3 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab3);
@@ -100,21 +118,75 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             return;
         }
 
-        if (isLocationOn()){
+        Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
+
+        if (isLocationOn() && my_location != null) {
             google_map.setMyLocationEnabled(true); //TODO make sure this is safe
 
             //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
-            Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
+//            Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
 
-
+            new SomeAsyncTask().execute(my_latlng);
         } else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
-            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-36.848946, 174.763993), 12));
+            LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
+            new SomeAsyncTask().execute(hardcoded_latlng);
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 15));
         }
 
     }
+
+    class SomeAsyncTask extends AsyncTask<LatLng, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(LatLng... params) {
+            LatLng my_location = params[0];
+            return AtApiRequests.getStopsByLocation(getBaseContext(), my_location.latitude, my_location.longitude, 1000.0);
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            populateMapWithStops(json);
+        }
+    }
+
+    private void populateMapWithStops(JSONObject json){
+        ArrayList<MarkerOptions> list_of_markers = new ArrayList<MarkerOptions>();
+
+        try {
+            if (json.getString("status").equals("OK")){
+                JSONArray responses_array = json.getJSONArray("response");
+
+                if (responses_array.length() == 0){
+                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
+                } else {
+                    String short_name, stop_id;
+                    Double stop_lat, stop_lng;
+                    for (int i = 0; i < responses_array.length(); i++){
+                        JSONObject stop_json = responses_array.getJSONObject(i);
+
+                        short_name = stop_json.getString("stop_name");
+                        stop_id = stop_json.getString("stop_id");
+                        stop_lat = stop_json.getDouble("stop_lat");
+                        stop_lng = stop_json.getDouble("stop_lon");
+
+
+                        list_of_markers.add(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").snippet("This is a snippet"));
+                    }
+
+                    for(MarkerOptions mo: list_of_markers){
+                        google_map.addMarker(mo);
+                    }
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onClick(View v) {
