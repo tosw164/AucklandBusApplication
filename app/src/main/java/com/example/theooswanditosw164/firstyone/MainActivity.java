@@ -57,8 +57,9 @@ public class MainActivity extends Activity implements OnClickListener{
 
         the_textview = (TextView)findViewById(R.id.textview);
 
-        HashMapContainers.getInstance(getBaseContext());
+//        HashMapContainers.getInstance(getBaseContext());
     }
+
 
     private void launch_intent(String layout_tag){
         Class my_class = null;
