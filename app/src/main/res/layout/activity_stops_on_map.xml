@@ -62,7 +62,7 @@
                 app:borderWidth="0dp"
                 app:fabSize="normal"
 
-                android:src=""
+                android:src="@drawable/ic_favorite_border_black_48dp"
                 />
 
             <android.support.design.widget.FloatingActionButton
@@ -75,7 +75,7 @@
                 app:borderWidth="0dp"
                 app:fabSize="normal"
 
-                android:src="@drawable/ic_favorite_border_black_48dp"
+                android:src="@drawable/ic_search_black_48dp"
                 />
 
             <android.support.design.widget.FloatingActionButton
@@ -88,7 +88,7 @@
                 app:borderWidth="0dp"
                 app:fabSize="normal"
 
-                android:src="@drawable/ic_search_black_48dp"
+                android:src="@drawable/ic_add_black_48dp"
                 />
         </LinearLayout>
     </FrameLayout>
