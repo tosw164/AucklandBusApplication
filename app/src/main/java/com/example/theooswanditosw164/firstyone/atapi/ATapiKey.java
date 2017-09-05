@@ -5,7 +5,7 @@ package com.example.theooswanditosw164.firstyone.atapi;
  */
 
 public class ATapiKey {
-    private static final String key = "92e47087b5c44366b1b74f96f42632df";
+    private static final String key = >>INSERT KEY HERE<<;
 
     public static String getKey(){
         return key;
