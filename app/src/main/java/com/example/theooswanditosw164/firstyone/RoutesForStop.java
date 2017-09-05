@@ -106,13 +106,6 @@ public class RoutesForStop extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected JSONObject doInBackground(String... params) {
-//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes/stopid/" + params[0]);
-//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/stopTimes/stopId/" + params[0]);
-//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/routes");
-//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/trips");
-
-
-//            return getJSONforLink("https://api.at.govt.nz/v2/gtfs/stops/stopinfo/" + params[0]);
             return AtApiRequests.getTimetableInformaitonFromStopNumber(getBaseContext(), params[0]);
         }
 

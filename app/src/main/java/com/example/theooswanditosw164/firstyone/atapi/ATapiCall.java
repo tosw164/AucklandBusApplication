@@ -19,7 +19,7 @@ public class ATapiCall {
         try{
             URL url = new URL(url_input);
             url_connection = (HttpURLConnection)url.openConnection();
-            url_connection.setRequestProperty("Ocp-Apim-Subscription-Key", "92e47087b5c44366b1b74f96f42632df");
+            url_connection.setRequestProperty("Ocp-Apim-Subscription-Key", ATapiKey.getKey());
 
             // Request not successful
             if (url_connection.getResponseCode() != HttpURLConnection.HTTP_OK) {

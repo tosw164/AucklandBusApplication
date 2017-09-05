@@ -88,10 +88,7 @@ public class RouteOnMap extends FragmentActivity implements OnMapReadyCallback {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-//            final String url_to_use = "https://api.at.govt.nz/v2/gtfs/shapes/tripId/" + params[0];
-
             return AtApiRequests.getRouteShapeDataFromTripID(getBaseContext(), params[0]);
-//            return ATapiCall.fetchJSONfromURLwithSubKey(getBaseContext(), url_to_use);
         }
 
         @Override
