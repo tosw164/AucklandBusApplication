@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,10 +25,32 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     private LocationManager location_manager;
     private final int MY_PERMISSION_ACCESS_LOCATION = 99;
 
+    Button button1, button2;
+    FloatingActionButton fab1, fab2, fab3;
+
+    private static final String TAG = StopsOnMap.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops_on_map);
+
+        button1 = (Button) findViewById(R.id.stopsonmap_button1);
+        button1.setOnClickListener(this);
+        button1.setText("but1");
+
+        button2 = (Button) findViewById(R.id.stopsonmap_button2);
+        button2.setOnClickListener(this);
+        button2.setText("but2");
+
+        fab1 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab1);
+        fab1.setOnClickListener(this);
+
+        fab2= (FloatingActionButton) findViewById(R.id.stopsonmap_fab2);
+        fab2.setOnClickListener(this);
+
+        fab3 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab3);
+        fab3.setOnClickListener(this);
 
         location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -76,7 +101,26 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()){
+            case R.id.stopsonmap_button1:
+                Log.i(TAG, "button1");
+                break;
+            case R.id.stopsonmap_button2:
+                Log.i(TAG, "button2");
+                break;
+            case R.id.stopsonmap_fab1:
+                Log.i(TAG, "fab1");
+                break;
+            case R.id.stopsonmap_fab2:
+                Log.i(TAG, "fab2");
+                break;
+            case R.id.stopsonmap_fab3:
+                Log.i(TAG, "fab3");
+                break;
+            default:
+                Log.i(TAG, "default");
+                break;
+        }
     }
 
 
