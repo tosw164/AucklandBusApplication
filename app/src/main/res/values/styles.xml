@@ -17,4 +17,11 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="StopsOnMap_FAB">
+        <item name="android:layout_margin">7dp</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:backgroundTint">@color/white</item>
+
+    </style>
+
 </resources>
