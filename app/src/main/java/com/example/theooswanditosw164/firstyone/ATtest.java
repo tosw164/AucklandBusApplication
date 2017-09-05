@@ -50,88 +50,21 @@ public class ATtest extends AppCompatActivity implements View.OnClickListener {
         timetable_listview = (ListView)findViewById(R.id.attest_timetable_listview);
     }
 
-//    class SomeAsyncTask extends AsyncTask<String, Void, JSONObject>{
-//
-//        @Override
-//        protected JSONObject doInBackground(String... params) {
-//            HttpURLConnection url_connection = null;
-//            try{
-//                URL url = new URL(params[0].toString());
-//                url_connection = (HttpURLConnection)url.openConnection();
-//                url_connection.setRequestProperty("Ocp-Apim-Subscription-Key", "92e47087b5c44366b1b74f96f42632df");
-//
-//                // Request not successful
-//                if (url_connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-//                    throw new RuntimeException("Request Failed. HTTP Error Code: " + url_connection.getResponseCode());
-//                }
-//
-//                // Read response
-//                BufferedReader br = new BufferedReader(new InputStreamReader(url_connection.getInputStream()));
-//
-//                StringBuffer jsonString = new StringBuffer();
-//                String line;
-//                int n = 0;
-//                while ((line = br.readLine()) != null) {
-//                    jsonString.append(line);
-//                    System.out.println(line);
-//                    n++;
-//                }
-//                br.close();
-//                url_connection.disconnect();
-//
-//                JSONObject json = new JSONObject(jsonString.toString());
-//
-//                return json;
-//
-//            } catch (UnknownHostException e){
-//                Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-//            }  catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(JSONObject json) {
-//            if (SELECTED_BUTTON == ROUTES_SELECTED){
-//                routesByStopPostProcessing(json);
-//            } else if (SELECTED_BUTTON == TIMETABLE_SELECTED){
-//                timetableByStopPostProcessing(json);
-//            }
-//
-//        }
-//    }
-
-//    private void routesByStopFunctionality(String url){
-//        System.out.println("routes_test");
-//        new SomeAsyncTask().execute(url);
-//    }
-
-
-
-//    private void timetableByStopFunctionality(String url){
-//        System.out.println("timetable test");
-//        new SomeAsyncTask().execute(url);
-//    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.attest_routesbystop_button:
                 SELECTED_BUTTON = ROUTES_SELECTED;
-//                routesByStopFunctionality("https://api.at.govt.nz/v2/gtfs/routes/stopid/" + STOP_NUMBER);
                 new routesAsyncTask().execute(STOP_NUMBER + "");
                 break;
             case R.id.attest_timetable_button:
                 SELECTED_BUTTON = TIMETABLE_SELECTED;
                 new timetableAsyncTask().execute(STOP_NUMBER + "");
-//                timetableByStopFunctionality("https://api.at.govt.nz/v2/gtfs/stops/stopinfo/" + STOP_NUMBER);
                 break;
         }
     }
 
     class timetableAsyncTask extends AsyncTask<String, Void, JSONObject>{
-
         @Override
         protected JSONObject doInBackground(String... params) {
             return AtApiRequests.getTimetableInformaitonFromStopNumber(getBaseContext(), STOP_NUMBER + "");
