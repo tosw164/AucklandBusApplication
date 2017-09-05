@@ -3,6 +3,8 @@ package com.example.theooswanditosw164.firstyone;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,9 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by TheoOswandi on 5/09/2017.
@@ -95,7 +99,20 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        google_map.setMyLocationEnabled(true); //TODO make sure this is safe
+
+        if (isLocationOn()){
+            google_map.setMyLocationEnabled(true); //TODO make sure this is safe
+
+            //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
+            Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
+            LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
+
+
+        } else {
+            //Hardcoded LatLng of Auckland from googling "Auckland latlng"
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(36.6465, 174.7633), 15));
+        }
 
     }
 
