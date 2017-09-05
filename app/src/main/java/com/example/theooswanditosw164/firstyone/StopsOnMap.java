@@ -111,7 +111,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
         } else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
-            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(36.6465, 174.7633), 15));
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-36.848946, 174.763993), 12));
         }
 
     }
