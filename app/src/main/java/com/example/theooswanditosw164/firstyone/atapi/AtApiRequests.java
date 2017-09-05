@@ -35,4 +35,13 @@ public class AtApiRequests extends ATapiCall{
                 "&hours=" + hours;
         return fetchJSONfromURL(c, url_to_use);
     }
+
+    public static JSONObject getStopsByLocation(Context c, Double lat, Double lng, Double radius){
+        String url_to_use = "https://api.at.govt.nz/v2/gtfs/stops/geosearch?" +
+                "lat=" + lat +
+                "&lng=" + lng +
+                "&distance=" + radius;
+        return fetchJSONfromURLwithSubKey(c, url_to_use);
+
+    }
 }
