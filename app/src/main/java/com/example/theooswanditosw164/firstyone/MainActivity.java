@@ -15,7 +15,8 @@ import com.example.theooswanditosw164.firstyone.dataclasses.HashMapContainers;
 public class MainActivity extends Activity implements OnClickListener{
 
     Button the_button, maps_button, newmaps_button,
-            at_test_button, timetable_button, realtime_button;
+            at_test_button, timetable_button, realtime_button, stopsonmap_button
+            ;
     TextView the_textview;
     private int i;
 
@@ -49,6 +50,10 @@ public class MainActivity extends Activity implements OnClickListener{
         realtime_button = (Button)findViewById(R.id.realtimeboard_button);
         realtime_button.setOnClickListener(this);
         realtime_button.setText("Realtime board");
+
+        stopsonmap_button = (Button) findViewById(R.id.stopsonmap_button);
+        stopsonmap_button.setOnClickListener(this);
+        stopsonmap_button.setText("StOPS on map");
 
         the_textview = (TextView)findViewById(R.id.textview);
 
@@ -89,6 +94,9 @@ public class MainActivity extends Activity implements OnClickListener{
                 break;
             case R.id.realtimeboard_button:
                 launch_intent("RealtimeTimetable");
+                break;
+            case R.id.stopsonmap_button:
+                launch_intent("StopsOnMap");
                 break;
 
         }
