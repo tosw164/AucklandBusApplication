@@ -14,7 +14,8 @@ import com.example.theooswanditosw164.firstyone.dataclasses.HashMapContainers;
 
 public class MainActivity extends Activity implements OnClickListener{
 
-    Button the_button, maps_button, newmaps_button, at_test_button, timetable_button;
+    Button the_button, maps_button, newmaps_button,
+            at_test_button, timetable_button, realtime_button;
     TextView the_textview;
     private int i;
 
@@ -45,6 +46,10 @@ public class MainActivity extends Activity implements OnClickListener{
         timetable_button.setOnClickListener(this);
         timetable_button.setText("Stop & Route information by stopnumber input");
 
+        realtime_button = (Button)findViewById(R.id.realtimeboard_button);
+        realtime_button.setOnClickListener(this);
+        realtime_button.setText("Realtime board");
+
         the_textview = (TextView)findViewById(R.id.textview);
 
         HashMapContainers.getInstance(getBaseContext());
@@ -67,7 +72,7 @@ public class MainActivity extends Activity implements OnClickListener{
             case R.id.button:
                 i++;
                 the_textview.setText("current count: " + i);
-                HashMapContainers.getInstance(getBaseContext()).test();
+//                HashMapContainers.getInstance(getBaseContext()).test();
 //                AtApiRequests.printAllTrips(getBaseContext());
                 break;
             case R.id.maps_button:
@@ -81,6 +86,9 @@ public class MainActivity extends Activity implements OnClickListener{
                 break;
             case R.id.timetable_button:
                 launch_intent("RoutesForStop");
+                break;
+            case R.id.realtimeboard_button:
+                launch_intent("RealtimeTimetable");
                 break;
 
         }
