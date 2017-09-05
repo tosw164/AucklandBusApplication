@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,7 +26,7 @@
             android:text="button2"
             android:layout_weight="50"/>
     </LinearLayout>
-    
+
     <!--
     Below code obtained from:
     https://stackoverflow.com/questions/41197643/floating-action-button-on-top-of-map-fragment
@@ -53,27 +54,41 @@
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/stopsonmap_fab1"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:elevation="4dp"
+
+                style="@style/StopsOnMap_FAB"
+                app:borderWidth="0dp"
+                app:fabSize="normal"
+
+                android:src=""
                 />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/stopsonmap_fab2"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:elevation="4dp"
+
+                style="@style/StopsOnMap_FAB"
+                app:borderWidth="0dp"
+                app:fabSize="normal"
+
+                android:src="@drawable/ic_favorite_border_black_48dp"
                 />
 
             <android.support.design.widget.FloatingActionButton
+                android:id="@+id/stopsonmap_fab3"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
-                android:layout_margin="5dp"
-                android:elevation="4dp"
-                android:id="@+id/stopsonmap_fab3"
+
+                style="@style/StopsOnMap_FAB"
+                app:borderWidth="0dp"
+                app:fabSize="normal"
+
+                android:src="@drawable/ic_search_black_48dp"
                 />
         </LinearLayout>
     </FrameLayout>
