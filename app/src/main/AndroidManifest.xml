@@ -45,7 +45,8 @@
         <activity android:name=".ATtest" />
         <activity android:name=".RoutesForStop" />
         <activity android:name=".RouteOnMap" />
-        <activity android:name=".RealtimeTimetable"></activity>
+        <activity android:name=".RealtimeTimetable"/>
+        <activity android:name=".StopsOnMap"/>
     </application>
 
 </manifest>
