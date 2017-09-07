@@ -9,3 +9,4 @@
 .externalNativeBuild
 
 ./*/google_maps_api.xml
+./*/ATapiKey.java
