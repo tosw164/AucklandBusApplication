@@ -80,6 +80,9 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         map_fragment.getMapAsync(this);
     }
 
+    /**
+     * Sets up components used in this activity
+     */
     private void setupComponents(){
         button1 = (Button) findViewById(R.id.stopsonmap_button1);
         button1.setOnClickListener(this);
@@ -92,6 +95,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         //Logic for fab menu
 //        https://stackoverflow.com/questions/30699302/android-design-support-library-fab-menu
 
+        //Initialise main button and menu buttons and register listeners for each
         main_fab = (FloatingActionButton) findViewById(R.id.stopsonmap_mainFAB);
         main_fab.setOnClickListener(this);
 
@@ -104,6 +108,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         menufab3 = (FloatingActionButton) findViewById(R.id.stopsonmap_FABmenu3);
         menufab3.setOnClickListener(this);
 
+        //Initialise FAB menu item containers and sets them to invisible/GONE
         fab_container2 = (LinearLayout) findViewById(R.id.stopsonmap_FABContainer1);
         fab_container2.setVisibility(View.GONE);
 
@@ -117,11 +122,14 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
     }
 
+    /**
+     * Checks if either GPS or Network enabled so can poll location
+     * @return
+     */
     private boolean isLocationOn() {
         return location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 location_manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -249,31 +257,43 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         }
     }
 
+    /**
+     * Animates opening of floating action menu
+     */
     private void animateFloatingActionMenuOpen(){
-        fab_menu_open = true;
+        fab_menu_open = true;   //set flag
 
+        //Sets all the containers to visible from previous GONE state
         fab_container1.setVisibility(View.VISIBLE);
         fab_container2.setVisibility(View.VISIBLE);
         fab_container3.setVisibility(View.VISIBLE);
 
+        //Rotate main button to make + into a X
         main_fab.animate().rotationBy(45);
 
+        //Initialise offset values
         float base_translate = getResources().getDimension(R.dimen.fab_menu_translate_base);
         float translate_unit = getResources().getDimension(R.dimen.fab_menu_translate_unit);
 
+        //Animate floating action menu buttons to respective positions based on constants above
         fab_container1.animate().translationY(-1 * (base_translate + translate_unit));
         fab_container2.animate().translationY(-1 * (base_translate + 2*translate_unit));
         fab_container3.animate().translationY(-1 * (base_translate + 3* translate_unit));
     }
 
+    /**
+     * Animate the closing of action menu
+     */
     private void animateFloatingActionMenuClose(){
-        fab_menu_open = false;
-        main_fab.animate().rotationBy(-45);
+        fab_menu_open = false;      //set flag
+        main_fab.animate().rotationBy(-45); //Make Icon + again from x
 
+        //Return containers to behind main action button
         fab_container1.animate().translationY(0);
         fab_container2.animate().translationY(0);
         fab_container3.animate().translationY(0);
 
+        //Hide containers to prevent accidental press and label from showing.
         fab_container1.setVisibility(View.GONE);
         fab_container2.setVisibility(View.GONE);
         fab_container3.setVisibility(View.GONE);
