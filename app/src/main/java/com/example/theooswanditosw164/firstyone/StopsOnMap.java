@@ -206,7 +206,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                         marker_to_add = google_map.addMarker(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
                         list_of_markers.add(marker_to_add);
                         map_of_markers_by_id.put(stop_id, marker_to_add);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").snippet("This is a snippet"));
                     }
                 }
 
@@ -261,8 +260,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
         float base_translate = getResources().getDimension(R.dimen.fab_menu_translate_base);
         float translate_unit = getResources().getDimension(R.dimen.fab_menu_translate_unit);
-//        menu_fab1.animate().translationY(-1 * (base_translate + translate_unit));
-//        menu_fab2.animate().translationY(-1 * (base_translate + 2*translate_unit));\
+
         fab_container1.animate().translationY(-1 * (base_translate + translate_unit));
         fab_container2.animate().translationY(-1 * (base_translate + 2*translate_unit));
         fab_container3.animate().translationY(-1 * (base_translate + 3* translate_unit));
@@ -271,8 +269,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     private void animateFloatingActionMenuClose(){
         fab_menu_open = false;
         main_fab.animate().rotationBy(-45);
-//        menu_fab1.animate().translationY(0);
-//        menu_fab2.animate().translationY(0);
+
         fab_container1.animate().translationY(0);
         fab_container2.animate().translationY(0);
         fab_container3.animate().translationY(0);
