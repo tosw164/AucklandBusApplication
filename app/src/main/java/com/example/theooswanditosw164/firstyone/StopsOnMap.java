@@ -42,10 +42,12 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     private final int MY_PERMISSION_ACCESS_LOCATION = 99;
 
     Button button1, button2;
-    FloatingActionButton fab1, fab2, fab3;
+    FloatingActionButton main_fab, menu_fab1, menu_fab2;
 
     ArrayList<Marker> list_of_markers;
     HashMap<String, Marker> map_of_markers_by_id;
+
+    private boolean fab_menu_open;
 
     private static final String TAG = StopsOnMap.class.getSimpleName();
 
@@ -62,14 +64,19 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         button2.setOnClickListener(this);
         button2.setText("but2");
 
-        fab1 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab1);
-        fab1.setOnClickListener(this);
+        //Logic for fab menu
+//        https://stackoverflow.com/questions/30699302/android-design-support-library-fab-menu
 
-        fab2 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab2);
-        fab2.setOnClickListener(this);
+        main_fab = (FloatingActionButton) findViewById(R.id.stopsonmap_mainFAB);
+        main_fab.setOnClickListener(this);
 
-        fab3 = (FloatingActionButton) findViewById(R.id.stopsonmap_fab3);
-        fab3.setOnClickListener(this);
+        menu_fab1 = (FloatingActionButton) findViewById(R.id.stopsonmap_FABmenu1);
+        menu_fab1.setOnClickListener(this);
+
+        menu_fab2 = (FloatingActionButton) findViewById(R.id.stopsonmap_FABmenu2);
+        menu_fab2.setOnClickListener(this);
+
+        fab_menu_open = false;
 
         location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -128,7 +135,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             google_map.setMyLocationEnabled(true); //TODO make sure this is safe
 
             //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
-//            Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
 
@@ -201,14 +207,27 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             case R.id.stopsonmap_button2:
                 Log.i(TAG, "button2");
                 break;
-            case R.id.stopsonmap_fab1:
-                Log.i(TAG, "fab1");
+            case R.id.stopsonmap_FABmenu1:
+                Log.i(TAG, "menu_fab2");
                 break;
-            case R.id.stopsonmap_fab2:
-                Log.i(TAG, "fab2");
+            case R.id.stopsonmap_FABmenu2:
+                Log.i(TAG, "menu_fab1");
                 break;
-            case R.id.stopsonmap_fab3:
-                Log.i(TAG, "fab3");
+            case R.id.stopsonmap_mainFAB:
+                Log.i(TAG, "MainFab");
+                if (!fab_menu_open){
+                    //open fab menu
+                    fab_menu_open = true;
+                    float base_translate = getResources().getDimension(R.dimen.fab_menu_translate_base);
+                    float translate_unit = getResources().getDimension(R.dimen.fab_menu_translate_unit);
+                    menu_fab1.animate().translationY(-1 * (base_translate + translate_unit));
+                    menu_fab2.animate().translationY(-1 * (base_translate + 2*translate_unit));
+                } else {
+                    //close fab menu
+                    fab_menu_open = false;
+                    menu_fab1.animate().translationY(0);
+                    menu_fab2.animate().translationY(0);
+                }
                 break;
             default:
                 Log.i(TAG, "default");
