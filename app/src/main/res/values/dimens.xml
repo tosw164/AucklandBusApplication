@@ -1,3 +1,9 @@
 <resources>
+    <dimen name="normal_fab_size">56dp</dimen>
+    <dimen name="mini_fab_size">40dp</dimen>
+
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_menu_margin">24dp</dimen>
+    <dimen name="fab_menu_translate_base">5dp</dimen>
+    <dimen name="fab_menu_translate_unit">55dp</dimen>
 </resources>
