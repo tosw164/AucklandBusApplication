@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
@@ -42,7 +43,8 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     private final int MY_PERMISSION_ACCESS_LOCATION = 99;
 
     Button button1, button2;
-    FloatingActionButton main_fab, menu_fab1, menu_fab2;
+    LinearLayout fab_container1, fab_container2, fab_container3;
+    FloatingActionButton main_fab, menu_fab1, menu_fab2, menufab3;
 
     ArrayList<Marker> list_of_markers;
     HashMap<String, Marker> map_of_markers_by_id;
@@ -56,6 +58,29 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops_on_map);
 
+        setupComponents();
+
+        location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_ACCESS_LOCATION);
+        }
+
+        SupportMapFragment map_fragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        map_fragment.getMapAsync(this);
+    }
+
+    private void setupComponents(){
         button1 = (Button) findViewById(R.id.stopsonmap_button1);
         button1.setOnClickListener(this);
         button1.setText("but1");
@@ -76,27 +101,19 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         menu_fab2 = (FloatingActionButton) findViewById(R.id.stopsonmap_FABmenu2);
         menu_fab2.setOnClickListener(this);
 
+        menufab3 = (FloatingActionButton) findViewById(R.id.stopsonmap_FABmenu3);
+        menufab3.setOnClickListener(this);
+
+        fab_container2 = (LinearLayout) findViewById(R.id.stopsonmap_FABContainer1);
+        fab_container2.setVisibility(View.GONE);
+
+        fab_container1 = (LinearLayout) findViewById(R.id.stopsonmap_FABContainer2);
+        fab_container1.setVisibility(View.GONE);
+
+        fab_container3 = (LinearLayout) findViewById(R.id.stopsonmap_FABContainer3);
+        fab_container3.setVisibility(View.GONE);
+
         fab_menu_open = false;
-
-        location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_ACCESS_LOCATION);
-        }
-
-        SupportMapFragment map_fragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        map_fragment.getMapAsync(this);
-
 
     }
 
@@ -109,6 +126,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         google_map = googleMap;
+        google_map.getUiSettings().setMapToolbarEnabled(false);
 
         //Add button to go to current location
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -213,26 +231,55 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             case R.id.stopsonmap_FABmenu2:
                 Log.i(TAG, "menu_fab1");
                 break;
+            case R.id.stopsonmap_FABmenu3:
+                Log.i(TAG, "menu fab 3");
+                break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
                 if (!fab_menu_open){
                     //open fab menu
-                    fab_menu_open = true;
-                    float base_translate = getResources().getDimension(R.dimen.fab_menu_translate_base);
-                    float translate_unit = getResources().getDimension(R.dimen.fab_menu_translate_unit);
-                    menu_fab1.animate().translationY(-1 * (base_translate + translate_unit));
-                    menu_fab2.animate().translationY(-1 * (base_translate + 2*translate_unit));
+                    animateFloatingActionMenuOpen();
                 } else {
                     //close fab menu
-                    fab_menu_open = false;
-                    menu_fab1.animate().translationY(0);
-                    menu_fab2.animate().translationY(0);
+                    animateFloatingActionMenuClose();
                 }
                 break;
             default:
                 Log.i(TAG, "default");
                 break;
         }
+    }
+
+    private void animateFloatingActionMenuOpen(){
+        fab_menu_open = true;
+
+        fab_container1.setVisibility(View.VISIBLE);
+        fab_container2.setVisibility(View.VISIBLE);
+        fab_container3.setVisibility(View.VISIBLE);
+
+        main_fab.animate().rotationBy(45);
+
+        float base_translate = getResources().getDimension(R.dimen.fab_menu_translate_base);
+        float translate_unit = getResources().getDimension(R.dimen.fab_menu_translate_unit);
+//        menu_fab1.animate().translationY(-1 * (base_translate + translate_unit));
+//        menu_fab2.animate().translationY(-1 * (base_translate + 2*translate_unit));\
+        fab_container1.animate().translationY(-1 * (base_translate + translate_unit));
+        fab_container2.animate().translationY(-1 * (base_translate + 2*translate_unit));
+        fab_container3.animate().translationY(-1 * (base_translate + 3* translate_unit));
+    }
+
+    private void animateFloatingActionMenuClose(){
+        fab_menu_open = false;
+        main_fab.animate().rotationBy(-45);
+//        menu_fab1.animate().translationY(0);
+//        menu_fab2.animate().translationY(0);
+        fab_container1.animate().translationY(0);
+        fab_container2.animate().translationY(0);
+        fab_container3.animate().translationY(0);
+
+        fab_container1.setVisibility(View.GONE);
+        fab_container2.setVisibility(View.GONE);
+        fab_container3.setVisibility(View.GONE);
     }
 
 
