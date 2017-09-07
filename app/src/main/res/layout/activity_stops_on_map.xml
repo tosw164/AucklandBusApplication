@@ -27,6 +27,7 @@
             android:layout_weight="50"/>
     </LinearLayout>
 
+
     <!--
     Below code obtained from:
     https://stackoverflow.com/questions/41197643/floating-action-button-on-top-of-map-fragment
@@ -37,36 +38,104 @@
         android:layout_below="@id/stopsonmap_buttoncontainer"
         >
 
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.example.theooswanditosw164.firstyone.StopsOnMap" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/stopsonmap_FABmenu1"
-
-            android:layout_width="@dimen/mini_fab_size"
-            android:layout_height="@dimen/mini_fab_size"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_gravity="bottom|right"
-            android:layout_margin="@dimen/fab_menu_margin"
+            android:id="@+id/stopsonmap_FABContainer2"
+            android:layout_margin="@dimen/fab_menu_margin">
 
-            style="@style/StopsOnMap_FAB"
-            app:borderWidth="0dp"
-            app:fabSize="mini"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Favourites"/>
 
-            android:src="@drawable/ic_favorite_border_black_24dp"
-            />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/stopsonmap_FABmenu1"
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/stopsonmap_FABmenu2"
+                android:layout_width="@dimen/mini_fab_size"
+                android:layout_height="@dimen/mini_fab_size"
+                android:layout_gravity="bottom|right"
 
-            android:layout_width="@dimen/mini_fab_size"
-            android:layout_height="@dimen/mini_fab_size"
+                style="@style/StopsOnMap_FAB"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+
+                android:src="@drawable/ic_favorite_border_black_24dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_gravity="bottom|right"
+            android:id="@+id/stopsonmap_FABContainer1"
             android:layout_margin="@dimen/fab_menu_margin"
+            >
 
-            style="@style/StopsOnMap_FAB"
-            app:borderWidth="0dp"
-            app:fabSize="mini"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search"
+                android:layout_gravity="center_vertical">
 
-            android:src="@drawable/ic_search_black_24dp"
-            />
+            </TextView>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/stopsonmap_FABmenu2"
+
+                android:layout_width="@dimen/mini_fab_size"
+                android:layout_height="@dimen/mini_fab_size"
+
+                style="@style/StopsOnMap_FAB"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+
+                android:src="@drawable/ic_search_black_24dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|right"
+            android:id="@+id/stopsonmap_FABContainer3"
+            android:layout_margin="@dimen/fab_menu_margin"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Stop"
+                android:layout_gravity="center_vertical">
+
+            </TextView>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/stopsonmap_FABmenu3"
+
+                android:layout_width="@dimen/mini_fab_size"
+                android:layout_height="@dimen/mini_fab_size"
+
+                style="@style/StopsOnMap_FAB"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+
+                android:src="@drawable/ic_add_circle_black_24dp"
+                />
+        </LinearLayout>
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/stopsonmap_mainFAB"
@@ -84,20 +153,5 @@
             />
 
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="bottom|right"-->
-            <!--android:orientation="vertical"-->
-            <!--android:layout_marginBottom="5dp"-->
-            <!--&gt;-->
-        <!--</LinearLayout>-->
-
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="com.example.theooswanditosw164.firstyone.StopsOnMap" />
     </FrameLayout>
 </RelativeLayout>
