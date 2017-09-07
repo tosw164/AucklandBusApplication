@@ -13,9 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
@@ -31,12 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by TheoOswandi on 5/09/2017.
@@ -49,6 +43,9 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
     Button button1, button2;
     FloatingActionButton fab1, fab2, fab3;
+
+    ArrayList<Marker> list_of_markers;
+    HashMap<String, Marker> map_of_markers_by_id;
 
     private static final String TAG = StopsOnMap.class.getSimpleName();
 
@@ -118,6 +115,13 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             return;
         }
 
+        google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Log.i(TAG, marker.getSnippet());
+            }
+        });
+
         Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
 
         if (isLocationOn() && my_location != null) {
@@ -138,6 +142,8 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
     }
 
+
+
     class SomeAsyncTask extends AsyncTask<LatLng, Void, JSONObject> {
         @Override
         protected JSONObject doInBackground(LatLng... params) {
@@ -152,7 +158,9 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     private void populateMapWithStops(JSONObject json){
-        ArrayList<MarkerOptions> list_of_markers = new ArrayList<MarkerOptions>();
+        list_of_markers = new ArrayList<Marker>();
+        map_of_markers_by_id = new HashMap<>();
+        Marker marker_to_add;
 
         try {
             if (json.getString("status").equals("OK")){
@@ -171,13 +179,10 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                         stop_lat = stop_json.getDouble("stop_lat");
                         stop_lng = stop_json.getDouble("stop_lon");
 
-
-                        list_of_markers.add(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
+                        marker_to_add = google_map.addMarker(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
+                        list_of_markers.add(marker_to_add);
+                        map_of_markers_by_id.put(stop_id, marker_to_add);
 //        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").snippet("This is a snippet"));
-                    }
-
-                    for(MarkerOptions mo: list_of_markers){
-                        google_map.addMarker(mo);
                     }
                 }
 
@@ -186,7 +191,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void onClick(View v) {
