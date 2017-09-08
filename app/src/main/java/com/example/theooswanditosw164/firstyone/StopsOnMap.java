@@ -174,12 +174,12 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
             //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
-            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
 
         } else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
-            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 15));
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 17));
         }
 
     }
@@ -217,57 +217,9 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         all_stops = db.getAllStops();
         db.close();
 
-        all_markers = new HashMap<>();
+        all_markers = new HashMap<String, Marker>();
     }
 
-
-
-//    class SomeAsyncTask extends AsyncTask<LatLng, Void, JSONObject> {
-//        @Override
-//        protected JSONObject doInBackground(LatLng... params) {
-//            LatLng my_location = params[0];
-//            return AtApiRequests.getStopsByLocation(getBaseContext(), my_location.latitude, my_location.longitude, 1000.0);
-//        }
-//
-//        @Override
-//        protected void onPostExecute(JSONObject json) {
-//            populateMapWithStops(json);
-//        }
-//    }
-//
-//    private void populateMapWithStops(JSONObject json){
-//        list_of_markers = new ArrayList<Marker>();
-//        map_of_markers_by_id = new HashMap<>();
-//        Marker marker_to_add;
-//
-//        try {
-//            if (json.getString("status").equals("OK")){
-//                JSONArray responses_array = json.getJSONArray("response");
-//
-//                if (responses_array.length() == 0){
-//                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
-//                } else {
-//                    String short_name, stop_id;
-//                    Double stop_lat, stop_lng;
-//                    for (int i = 0; i < responses_array.length(); i++){
-//                        JSONObject stop_json = responses_array.getJSONObject(i);
-//
-//                        short_name = stop_json.getString("stop_name");
-//                        stop_id = stop_json.getString("stop_id");
-//                        stop_lat = stop_json.getDouble("stop_lat");
-//                        stop_lng = stop_json.getDouble("stop_lon");
-//
-//                        marker_to_add = google_map.addMarker(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
-//                        list_of_markers.add(marker_to_add);
-//                        map_of_markers_by_id.put(stop_id, marker_to_add);
-//                    }
-//                }
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     private void populateDB(){
         new getStopsWorker().execute();
