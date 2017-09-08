@@ -353,6 +353,10 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 break;
             case R.id.stopsonmap_FABmenu2:
                 Log.i(TAG, "menu_fab1");
+                Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
+                LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
+                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
+//                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, (float)16.5));
                 break;
             case R.id.stopsonmap_FABmenu3:
                 Log.i(TAG, "menu fab 3");
