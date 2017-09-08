@@ -53,10 +53,6 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
 //        DATABASE_VERSION += 1;
     }
 
-    public void forceRefresh(){
-
-    }
-
     public void printColumnNames(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(STOPS_TABLENAME, null, null, null, null, null, null);
@@ -67,7 +63,7 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
     }
 
     public void createStop(String stop_id, String short_name, Double lat, Double lng){
-//        if (true){
+        //Check if stopID already exist in the database
         if (this.getStop(stop_id) == null) {
             SQLiteDatabase db = this.getWritableDatabase();
 
@@ -80,10 +76,6 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
             db.insert(STOPS_TABLENAME, null, values);
             db.close();
         }
-        else {
-            System.out.println(stop_id + "already exist");
-        }
-
     }
 
     public int countStops(){
