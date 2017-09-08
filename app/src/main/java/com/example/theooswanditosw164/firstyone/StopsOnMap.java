@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
+import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -223,14 +225,84 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         }
     }
 
+    private void populateDB(){
+        new getStopsWorker().execute();
+    }
+
+    class getStopsWorker extends AsyncTask<Void, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            return AtApiRequests.getAllStops(getBaseContext());
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            printAllStops(json);
+        }
+    }
+
+    private void printAllStops(JSONObject json){
+        try {
+            if (json.getString("status").equals("OK")){
+                JSONArray responses_array = json.getJSONArray("response");
+
+                if (responses_array.length() == 0){
+                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
+                } else {
+                    String short_name, stop_id;
+                    Double stop_lat, stop_lng;
+
+                    SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+                    db.printColumnNames();
+                    for (int i = 0; i < responses_array.length(); i++){
+                        JSONObject stop_json = responses_array.getJSONObject(i);
+
+                        short_name = stop_json.getString("stop_name");
+                        stop_id = stop_json.getString("stop_id");
+                        stop_lat = stop_json.getDouble("stop_lat");
+                        stop_lng = stop_json.getDouble("stop_lon");
+
+                        db.createStop(stop_id, short_name, stop_lat, stop_lng);
+                    }
+
+                    Log.i(TAG, "finished adding");
+                    for (BusStop b: db.getAllStops()){
+                        System.out.println(b.toString());
+                    }
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void printFromDB(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        for (BusStop b: db.getAllStops()){
+            System.out.println(b.toString());
+        }
+        System.out.println("DOne");
+    }
+
+    private void upgradeDB(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+//        db.forceUpgrade();
+//        db.forceRefresh();
+        Log.i(TAG, "rows: " + db.countStops());
+        System.out.println("DOne");
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.stopsonmap_button1:
                 Log.i(TAG, "button1");
+                populateDB();
                 break;
             case R.id.stopsonmap_button2:
                 Log.i(TAG, "button2");
+                printFromDB();
                 break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "menu_fab2");
@@ -240,6 +312,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 break;
             case R.id.stopsonmap_FABmenu3:
                 Log.i(TAG, "menu fab 3");
+                upgradeDB();
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
