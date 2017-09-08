@@ -144,4 +144,32 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
 
         return all_stops;
     }
+
+    /**
+     * Method to update given stop
+     * @return int code if successful
+     */
+    public int updateStop(BusStop stop){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(STOPS_STOPID, stop.getStopId());
+        values.put(STOPS_SHORTNAME, stop.getShortName());
+        values.put(STOPS_LAT, stop.getLat());
+        values.put(STOPS_LNG, stop.getLng());
+
+        int return_value =  db.update(STOPS_TABLENAME, values, STOPS_STOPID + " =?", new String[] {stop.getStopId()});
+        db.close();
+        return return_value;
+    }
+
+    /**
+     * Delete stop passed in
+     */
+    public void deleteStop(BusStop stop){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(STOPS_TABLENAME, STOPS_STOPID + " =?", new String[]{stop.getStopId()});
+        db.close();
+    }
 }
