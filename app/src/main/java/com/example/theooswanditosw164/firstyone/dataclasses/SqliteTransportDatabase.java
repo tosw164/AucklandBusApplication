@@ -16,7 +16,7 @@ import java.util.List;
 public class SqliteTransportDatabase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TransportDatabase";
-    private static final int DATABASE_VERSION = 1;
+    private static int DATABASE_VERSION = 2;
 
     private static final String STOPS_TABLENAME = "stops_table";
     private static final String STOPS_STOPID = "stop_id";
@@ -32,7 +32,7 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_STOPS_TABLE = "CREATE TABLE " + STOPS_TABLENAME +
-                "(" + STOPS_STOPID + "INTEGER PRIMARY KEY," +
+                "(" + STOPS_STOPID + " INTEGER PRIMARY KEY," +
                 STOPS_SHORTNAME + " TEXT," +
                 STOPS_LAT + " FLOAT," +
                 STOPS_LNG + " FLOAT);";
@@ -44,21 +44,66 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
         //TODO for all tables created
         db.execSQL("DROP TABLE IF EXISTS " + STOPS_TABLENAME);
 
-
         onCreate(db);
     }
 
-    public void createStop(String stop_id, String short_name, Double lat, Double lng){
+    public void forceUpgrade(){
         SQLiteDatabase db = this.getWritableDatabase();
+        onUpgrade(db, DATABASE_VERSION, DATABASE_VERSION+1);
+//        DATABASE_VERSION += 1;
+    }
 
-        ContentValues values = new ContentValues();
-        values.put(STOPS_STOPID, stop_id);
-        values.put(STOPS_SHORTNAME, short_name);
-        values.put(STOPS_LAT, lat);
-        values.put(STOPS_LNG, lng);
+    public void forceRefresh(){
 
-        db.insert(STOPS_TABLENAME, null, values);
+    }
+
+    public void printColumnNames(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(STOPS_TABLENAME, null, null, null, null, null, null);
+        for (String s: cursor.getColumnNames()){
+            System.out.println("col" + s);
+        }
         db.close();
+    }
+
+    public void createStop(String stop_id, String short_name, Double lat, Double lng){
+//        if (true){
+        if (this.getStop(stop_id) == null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(STOPS_STOPID, stop_id);
+            values.put(STOPS_SHORTNAME, short_name);
+            values.put(STOPS_LAT, lat);
+            values.put(STOPS_LNG, lng);
+
+            db.insert(STOPS_TABLENAME, null, values);
+            db.close();
+        }
+        else {
+            System.out.println(stop_id + "already exist");
+        }
+
+    }
+
+    public int countStops(){
+     return getAllStops().size();
+    }
+
+    public BusStop getStop(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        BusStop stop = null;
+        Cursor cursor = db.query(STOPS_TABLENAME, new String[] { STOPS_STOPID,
+                        STOPS_SHORTNAME, STOPS_LAT, STOPS_LNG }, STOPS_STOPID + "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+        if (cursor.getCount() >= 1) {
+            cursor.moveToFirst();
+            stop = new BusStop(cursor.getString(0), cursor.getString(1), cursor.getDouble(2), cursor.getDouble(3));
+        }
+
+        cursor.close();
+        db.close();
+        return stop;
     }
 
     public List<BusStop> getAllStops(){
@@ -80,6 +125,8 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
                 all_stops.add(stop);
             } while (cursor.moveToNext());
         }
+
+        db.close();
 
         return all_stops;
     }
