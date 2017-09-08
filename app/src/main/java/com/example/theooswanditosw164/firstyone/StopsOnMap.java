@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by TheoOswandi on 5/09/2017.
@@ -51,7 +52,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     FloatingActionButton main_fab, menu_fab1, menu_fab2, menufab3;
 
     List<BusStop> all_stops;
-    HashMap<String, Marker> all_markers;
+    ConcurrentHashMap<String, Marker> all_markers;
 
     private boolean fab_menu_open;
 
@@ -157,7 +158,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             @Override
             public void onCameraIdle() {
                 Log.i(TAG, "idle");
-                addMarkersToMap(all_stops);
+                checkZoomAndAddMarkers();
             }
         });
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -182,6 +183,18 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 17));
         }
 
+    }
+
+    private void checkZoomAndAddMarkers(){
+        if (google_map.getCameraPosition().zoom > 15){
+            addMarkersToMap(all_stops);
+        } else {
+            //Clear google map
+            for (String id: all_markers.keySet()){
+                all_markers.get(id).remove();
+                all_markers.remove(id);
+            }
+        }
     }
 
     /**
@@ -217,7 +230,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         all_stops = db.getAllStops();
         db.close();
 
-        all_markers = new HashMap<String, Marker>();
+        all_markers = new ConcurrentHashMap<String, Marker>();
     }
 
 
