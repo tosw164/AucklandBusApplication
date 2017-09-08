@@ -166,7 +166,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
 
-            new SomeAsyncTask().execute(my_latlng);
+//            new SomeAsyncTask().execute(my_latlng);
         } else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
