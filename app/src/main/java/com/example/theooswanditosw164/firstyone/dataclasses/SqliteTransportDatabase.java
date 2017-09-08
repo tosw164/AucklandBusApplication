@@ -47,18 +47,25 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Method that should reset database contents
+     */
     public void forceUpgrade(){
         SQLiteDatabase db = this.getWritableDatabase();
         onUpgrade(db, DATABASE_VERSION, DATABASE_VERSION+1);
 //        DATABASE_VERSION += 1;
     }
 
+    /**
+     * Goes through stops table and prints column names
+     */
     public void printColumnNames(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(STOPS_TABLENAME, null, null, null, null, null, null);
         for (String s: cursor.getColumnNames()){
-            System.out.println("col" + s);
+            System.out.println("col \t" + s);
         }
+        cursor.close();
         db.close();
     }
 
@@ -78,16 +85,27 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * @return number of stops in StopsTable
+     */
     public int countStops(){
      return getAllStops().size();
     }
 
+    /**
+     * Method that gets single stop object from database.
+     * @param id representing stop_id column in database
+     * @return relevant BusStop object containing short name, and latlng
+     */
     public BusStop getStop(String id){
         SQLiteDatabase db = this.getReadableDatabase();
         BusStop stop = null;
+
         Cursor cursor = db.query(STOPS_TABLENAME, new String[] { STOPS_STOPID,
                         STOPS_SHORTNAME, STOPS_LAT, STOPS_LNG }, STOPS_STOPID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
+
+        //Only populate stop if something returned.
         if (cursor.getCount() >= 1) {
             cursor.moveToFirst();
             stop = new BusStop(cursor.getString(0), cursor.getString(1), cursor.getDouble(2), cursor.getDouble(3));
@@ -95,9 +113,13 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        return stop;
+        return stop; //returns null if not found
     }
 
+    /**
+     * Goes through stops table and returns list of all bus stops
+     * @return
+     */
     public List<BusStop> getAllStops(){
         List<BusStop> all_stops = new ArrayList<BusStop>();
 
@@ -117,7 +139,7 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
                 all_stops.add(stop);
             } while (cursor.moveToNext());
         }
-
+        cursor.close();
         db.close();
 
         return all_stops;

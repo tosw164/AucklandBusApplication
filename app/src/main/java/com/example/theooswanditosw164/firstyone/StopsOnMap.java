@@ -282,14 +282,14 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         for (BusStop b: db.getAllStops()){
             System.out.println(b.toString());
         }
-        System.out.println("DOne");
+
+        System.out.println(db.countStops() + "DOne");
     }
 
     private void upgradeDB(){
         SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
-//        db.forceUpgrade();
-//        db.forceRefresh();
-        Log.i(TAG, "rows: " + db.countStops());
+        db.forceUpgrade();
+//        Log.i(TAG, "rows: " + db.countStops());
         System.out.println("DOne");
     }
 
