@@ -25,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by TheoOswandi on 5/09/2017.
@@ -48,8 +50,8 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     LinearLayout fab_container1, fab_container2, fab_container3;
     FloatingActionButton main_fab, menu_fab1, menu_fab2, menufab3;
 
-    ArrayList<Marker> list_of_markers;
-    HashMap<String, Marker> map_of_markers_by_id;
+    List<BusStop> all_stops;
+    HashMap<String, Marker> all_markers;
 
     private boolean fab_menu_open;
 
@@ -150,6 +152,14 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             return;
         }
 
+        initialiseStops();
+        google_map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                Log.i(TAG, "idle");
+                addMarkersToMap(all_stops);
+            }
+        });
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -166,64 +176,98 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
 
-//            new SomeAsyncTask().execute(my_latlng);
         } else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
-            new SomeAsyncTask().execute(hardcoded_latlng);
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 15));
         }
 
     }
 
+    /**
+     * Based on: https://discgolfsoftware.wordpress.com/2012/12/06/hiding-and-showing-on-screen-markers-with-google-maps-android-api-v2/#comment-3
+     * @param stops
+     */
+    private void addMarkersToMap(List<BusStop> stops){
+        if (google_map != null){
+            LatLngBounds camera_bounds = google_map.getProjection().getVisibleRegion().latLngBounds;
 
+            for (BusStop stop: stops){
+                //If stop in  current screen
+                if (camera_bounds.contains(new LatLng(stop.getLat(), stop.getLng()))){
 
-    class SomeAsyncTask extends AsyncTask<LatLng, Void, JSONObject> {
-        @Override
-        protected JSONObject doInBackground(LatLng... params) {
-            LatLng my_location = params[0];
-            return AtApiRequests.getStopsByLocation(getBaseContext(), my_location.latitude, my_location.longitude, 1000.0);
-        }
+                    //If stop not in hashmap, add it and place marker
+                    if (!all_markers.containsKey(stop.getStopId())){
+                        all_markers.put(stop.getStopId(), google_map.addMarker(new MarkerOptions().position(new LatLng(stop.getLat(), stop.getLng())).title(stop.getStopId()).snippet(stop.getShortName())));
+                    }
+                } else { //If stop not in range
 
-        @Override
-        protected void onPostExecute(JSONObject json) {
-            populateMapWithStops(json);
-        }
-    }
-
-    private void populateMapWithStops(JSONObject json){
-        list_of_markers = new ArrayList<Marker>();
-        map_of_markers_by_id = new HashMap<>();
-        Marker marker_to_add;
-
-        try {
-            if (json.getString("status").equals("OK")){
-                JSONArray responses_array = json.getJSONArray("response");
-
-                if (responses_array.length() == 0){
-                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
-                } else {
-                    String short_name, stop_id;
-                    Double stop_lat, stop_lng;
-                    for (int i = 0; i < responses_array.length(); i++){
-                        JSONObject stop_json = responses_array.getJSONObject(i);
-
-                        short_name = stop_json.getString("stop_name");
-                        stop_id = stop_json.getString("stop_id");
-                        stop_lat = stop_json.getDouble("stop_lat");
-                        stop_lng = stop_json.getDouble("stop_lon");
-
-                        marker_to_add = google_map.addMarker(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
-                        list_of_markers.add(marker_to_add);
-                        map_of_markers_by_id.put(stop_id, marker_to_add);
+                    //If stop was in map, remove it
+                    if (all_markers.containsKey(stop.getStopId())){
+                        all_markers.get(stop.getStopId()).remove();
+                        all_markers.remove(stop.getStopId());
                     }
                 }
-
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
+
+    private void initialiseStops(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        all_stops = db.getAllStops();
+        db.close();
+
+        all_markers = new HashMap<>();
+    }
+
+
+
+//    class SomeAsyncTask extends AsyncTask<LatLng, Void, JSONObject> {
+//        @Override
+//        protected JSONObject doInBackground(LatLng... params) {
+//            LatLng my_location = params[0];
+//            return AtApiRequests.getStopsByLocation(getBaseContext(), my_location.latitude, my_location.longitude, 1000.0);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(JSONObject json) {
+//            populateMapWithStops(json);
+//        }
+//    }
+//
+//    private void populateMapWithStops(JSONObject json){
+//        list_of_markers = new ArrayList<Marker>();
+//        map_of_markers_by_id = new HashMap<>();
+//        Marker marker_to_add;
+//
+//        try {
+//            if (json.getString("status").equals("OK")){
+//                JSONArray responses_array = json.getJSONArray("response");
+//
+//                if (responses_array.length() == 0){
+//                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
+//                } else {
+//                    String short_name, stop_id;
+//                    Double stop_lat, stop_lng;
+//                    for (int i = 0; i < responses_array.length(); i++){
+//                        JSONObject stop_json = responses_array.getJSONObject(i);
+//
+//                        short_name = stop_json.getString("stop_name");
+//                        stop_id = stop_json.getString("stop_id");
+//                        stop_lat = stop_json.getDouble("stop_lat");
+//                        stop_lng = stop_json.getDouble("stop_lon");
+//
+//                        marker_to_add = google_map.addMarker(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
+//                        list_of_markers.add(marker_to_add);
+//                        map_of_markers_by_id.put(stop_id, marker_to_add);
+//                    }
+//                }
+//
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void populateDB(){
         new getStopsWorker().execute();
