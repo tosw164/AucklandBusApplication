@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.MarkerClusterItem;
 import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +36,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by TheoOswandi on 5/09/2017.
@@ -50,6 +53,8 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
     ArrayList<Marker> list_of_markers;
     HashMap<String, Marker> map_of_markers_by_id;
+
+    ClusterManager<MarkerClusterItem> cluster_manager;
 
     private boolean fab_menu_open;
 
@@ -157,6 +162,11 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             }
         });
 
+        cluster_manager = new ClusterManager<MarkerClusterItem>(getBaseContext(), google_map);
+        google_map.setOnCameraIdleListener(cluster_manager);
+        Log.i(TAG, "Begin fetching from DB");
+        new fetchStopsWorker().execute();
+
         Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
 
         if (isLocationOn() && my_location != null) {
@@ -166,63 +176,36 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
 
-//            new SomeAsyncTask().execute(my_latlng);
+//            new fetchStopsWorker().execute(my_latlng);
         } else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
-            new SomeAsyncTask().execute(hardcoded_latlng);
+//            new fetchStopsWorker().execute(hardcoded_latlng);
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 15));
         }
 
     }
 
-
-
-    class SomeAsyncTask extends AsyncTask<LatLng, Void, JSONObject> {
+    class fetchStopsWorker extends AsyncTask<Void, Void, List<MarkerClusterItem>> {
         @Override
-        protected JSONObject doInBackground(LatLng... params) {
-            LatLng my_location = params[0];
-            return AtApiRequests.getStopsByLocation(getBaseContext(), my_location.latitude, my_location.longitude, 1000.0);
+        protected List<MarkerClusterItem> doInBackground(Void... params) {
+            SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+            List<MarkerClusterItem> list_of_markers = new ArrayList<MarkerClusterItem>();
+            for (BusStop stop: db.getAllStops()){
+                list_of_markers.add(new MarkerClusterItem(stop.getStopId(), stop.getShortName(), new LatLng(stop.getLat(), stop.getLng())));
+            }
+            return list_of_markers;
         }
 
         @Override
-        protected void onPostExecute(JSONObject json) {
-            populateMapWithStops(json);
+        protected void onPostExecute(List<MarkerClusterItem> markers) {
+            initialiseClusterManager(markers);
         }
     }
 
-    private void populateMapWithStops(JSONObject json){
-        list_of_markers = new ArrayList<Marker>();
-        map_of_markers_by_id = new HashMap<>();
-        Marker marker_to_add;
-
-        try {
-            if (json.getString("status").equals("OK")){
-                JSONArray responses_array = json.getJSONArray("response");
-
-                if (responses_array.length() == 0){
-                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
-                } else {
-                    String short_name, stop_id;
-                    Double stop_lat, stop_lng;
-                    for (int i = 0; i < responses_array.length(); i++){
-                        JSONObject stop_json = responses_array.getJSONObject(i);
-
-                        short_name = stop_json.getString("stop_name");
-                        stop_id = stop_json.getString("stop_id");
-                        stop_lat = stop_json.getDouble("stop_lat");
-                        stop_lng = stop_json.getDouble("stop_lon");
-
-                        marker_to_add = google_map.addMarker(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
-                        list_of_markers.add(marker_to_add);
-                        map_of_markers_by_id.put(stop_id, marker_to_add);
-                    }
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void initialiseClusterManager(List<MarkerClusterItem> list_of_markers){
+        cluster_manager.addItems(list_of_markers);
+        Log.i(TAG, "DONE POPULATING");
     }
 
     private void populateDB(){
