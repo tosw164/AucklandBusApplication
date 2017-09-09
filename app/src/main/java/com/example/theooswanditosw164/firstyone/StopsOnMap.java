@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.theooswanditosw164.firstyone.atapi.AtApiDatabaseRequests;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
 import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
@@ -257,7 +258,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         switch (v.getId()){
             case R.id.stopsonmap_button1:
                 Log.i(TAG, "button1");
-                populateDB();
+                AtApiDatabaseRequests.populateDB(getBaseContext());
                 break;
             case R.id.stopsonmap_button2:
                 Log.i(TAG, "button2");
@@ -277,17 +278,21 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
-                if (!fab_menu_open){
-                    //open fab menu
-                    animateFloatingActionMenuOpen();
-                } else {
-                    //close fab menu
-                    animateFloatingActionMenuClose();
-                }
+                mainFABaction();
                 break;
             default:
                 Log.i(TAG, "default");
                 break;
+        }
+    }
+
+    private void mainFABaction(){
+        if (!fab_menu_open){
+            //open fab menu
+            animateFloatingActionMenuOpen();
+        } else {
+            //close fab menu
+            animateFloatingActionMenuClose();
         }
     }
 
