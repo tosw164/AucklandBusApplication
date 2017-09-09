@@ -3,6 +3,7 @@ package com.example.theooswanditosw164.firstyone;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -14,15 +15,19 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
+import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -32,6 +37,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by TheoOswandi on 5/09/2017.
@@ -46,8 +53,8 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     LinearLayout fab_container1, fab_container2, fab_container3;
     FloatingActionButton main_fab, menu_fab1, menu_fab2, menufab3;
 
-    ArrayList<Marker> list_of_markers;
-    HashMap<String, Marker> map_of_markers_by_id;
+    List<BusStop> all_stops;
+    ConcurrentHashMap<String, Marker> all_markers;
 
     private boolean fab_menu_open;
 
@@ -77,6 +84,11 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
         SupportMapFragment map_fragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        //Change the Mylocation button icon in map view
+        ImageView location_button = (ImageView) map_fragment.getView().findViewById(2);
+        location_button.setImageResource(R.drawable.ic_gps_fixed_black_48dp);
+
         map_fragment.getMapAsync(this);
     }
 
@@ -148,6 +160,14 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             return;
         }
 
+        initialiseStops();
+        google_map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                Log.i(TAG, "idle");
+                checkZoomAndAddMarkers();
+            }
+        });
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -162,38 +182,82 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
             //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
-            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 15));
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
 
-            new SomeAsyncTask().execute(my_latlng);
         } else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
-            new SomeAsyncTask().execute(hardcoded_latlng);
-            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 15));
+            google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 17));
         }
 
     }
 
+    private void checkZoomAndAddMarkers(){
+        if (google_map.getCameraPosition().zoom > 15){
+            addMarkersToMap(all_stops);
+        } else {
+            //Clear google map
+            for (String id: all_markers.keySet()){
+                all_markers.get(id).remove();
+                all_markers.remove(id);
+            }
+        }
+    }
+
+    /**
+     * Based on: https://discgolfsoftware.wordpress.com/2012/12/06/hiding-and-showing-on-screen-markers-with-google-maps-android-api-v2/#comment-3
+     * @param stops
+     */
+    private void addMarkersToMap(List<BusStop> stops){
+        if (google_map != null){
+            LatLngBounds camera_bounds = google_map.getProjection().getVisibleRegion().latLngBounds;
+
+            for (BusStop stop: stops){
+                //If stop in  current screen
+                if (camera_bounds.contains(new LatLng(stop.getLat(), stop.getLng()))){
+
+                    //If stop not in hashmap, add it and place marker
+                    if (!all_markers.containsKey(stop.getStopId())){
+                        all_markers.put(stop.getStopId(), google_map.addMarker(new MarkerOptions().position(new LatLng(stop.getLat(), stop.getLng())).title(stop.getStopId()).snippet(stop.getShortName())));
+                    }
+                } else { //If stop not in range
+
+                    //If stop was in map, remove it
+                    if (all_markers.containsKey(stop.getStopId())){
+                        all_markers.get(stop.getStopId()).remove();
+                        all_markers.remove(stop.getStopId());
+                    }
+                }
+            }
+        }
+    }
+
+    private void initialiseStops(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        all_stops = db.getAllStops();
+        db.close();
+
+        all_markers = new ConcurrentHashMap<String, Marker>();
+    }
 
 
-    class SomeAsyncTask extends AsyncTask<LatLng, Void, JSONObject> {
+    private void populateDB(){
+        new getStopsWorker().execute();
+    }
+
+    class getStopsWorker extends AsyncTask<Void, Void, JSONObject> {
         @Override
-        protected JSONObject doInBackground(LatLng... params) {
-            LatLng my_location = params[0];
-            return AtApiRequests.getStopsByLocation(getBaseContext(), my_location.latitude, my_location.longitude, 1000.0);
+        protected JSONObject doInBackground(Void... params) {
+            return AtApiRequests.getAllStops(getBaseContext());
         }
 
         @Override
         protected void onPostExecute(JSONObject json) {
-            populateMapWithStops(json);
+            printAllStops(json);
         }
     }
 
-    private void populateMapWithStops(JSONObject json){
-        list_of_markers = new ArrayList<Marker>();
-        map_of_markers_by_id = new HashMap<>();
-        Marker marker_to_add;
-
+    private void printAllStops(JSONObject json){
         try {
             if (json.getString("status").equals("OK")){
                 JSONArray responses_array = json.getJSONArray("response");
@@ -203,6 +267,9 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 } else {
                     String short_name, stop_id;
                     Double stop_lat, stop_lng;
+
+                    SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+                    db.printColumnNames();
                     for (int i = 0; i < responses_array.length(); i++){
                         JSONObject stop_json = responses_array.getJSONObject(i);
 
@@ -211,9 +278,12 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                         stop_lat = stop_json.getDouble("stop_lat");
                         stop_lng = stop_json.getDouble("stop_lon");
 
-                        marker_to_add = google_map.addMarker(new MarkerOptions().position(new LatLng(stop_lat, stop_lng)).title(stop_id).snippet(short_name));
-                        list_of_markers.add(marker_to_add);
-                        map_of_markers_by_id.put(stop_id, marker_to_add);
+                        db.createStop(stop_id, short_name, stop_lat, stop_lng);
+                    }
+
+                    Log.i(TAG, "finished adding");
+                    for (BusStop b: db.getAllStops()){
+                        System.out.println(b.toString());
                     }
                 }
 
@@ -223,23 +293,46 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         }
     }
 
+    private void printFromDB(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        for (BusStop b: db.getAllStops()){
+            System.out.println(b.toString());
+        }
+
+        System.out.println(db.countStops() + "DOne");
+    }
+
+    private void upgradeDB(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.forceUpgrade();
+//        Log.i(TAG, "rows: " + db.countStops());
+        System.out.println("DOne");
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.stopsonmap_button1:
                 Log.i(TAG, "button1");
+                populateDB();
                 break;
             case R.id.stopsonmap_button2:
                 Log.i(TAG, "button2");
+                printFromDB();
                 break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "menu_fab2");
                 break;
             case R.id.stopsonmap_FABmenu2:
                 Log.i(TAG, "menu_fab1");
+                Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
+                LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
+                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
+//                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, (float)16.5));
                 break;
             case R.id.stopsonmap_FABmenu3:
                 Log.i(TAG, "menu fab 3");
+                upgradeDB();
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
