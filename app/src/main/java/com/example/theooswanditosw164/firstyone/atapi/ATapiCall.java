@@ -13,7 +13,7 @@ import java.net.URL;
  * Created by theooswanditosw164 on 19/03/17.
  */
 
-public abstract class ATapiCall {
+public class ATapiCall {
     public static JSONObject fetchJSONfromURLwithSubKey(Context contxt, String url_input){
         HttpURLConnection url_connection = null;
         try{
