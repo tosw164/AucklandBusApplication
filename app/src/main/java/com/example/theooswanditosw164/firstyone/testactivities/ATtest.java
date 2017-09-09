@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone;
+package com.example.theooswanditosw164.firstyone.testactivities;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -8,19 +8,14 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.example.theooswanditosw164.firstyone.R;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class ATtest extends AppCompatActivity implements View.OnClickListener {

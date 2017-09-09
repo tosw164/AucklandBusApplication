@@ -82,19 +82,19 @@ public class MainActivity extends Activity implements OnClickListener{
 //                AtApiRequests.printAllTrips(getBaseContext());
                 break;
             case R.id.maps_button:
-                launch_intent("MapsActivity");
+                launch_intent("testactivities.MapsActivity");
                 break;
             case R.id.newmaps_button:
-                launch_intent("NewMapActivity");
+                launch_intent("testactivities.NewMapActivity");
                 break;
             case R.id.at_test_button:
-                launch_intent("ATtest");
+                launch_intent("testactivities.ATtest");
                 break;
             case R.id.timetable_button:
-                launch_intent("RoutesForStop");
+                launch_intent("testactivities.RoutesForStop");
                 break;
             case R.id.realtimeboard_button:
-                launch_intent("RealtimeTimetable");
+                launch_intent("testactivities.RealtimeTimetable");
                 break;
             case R.id.stopsonmap_button:
                 launch_intent("StopsOnMap");

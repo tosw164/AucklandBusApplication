@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.theooswanditosw164.firstyone.RoutesForStop">
+    tools:context="com.example.theooswanditosw164.firstyone.testactivities.RoutesForStop">
 
     <LinearLayout
         android:weightSum="100"
