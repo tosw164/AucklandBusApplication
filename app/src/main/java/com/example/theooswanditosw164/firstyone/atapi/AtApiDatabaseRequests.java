@@ -84,10 +84,8 @@ public class AtApiDatabaseRequests extends ATapiCall {
                         db.createStop(stop_id, short_name, stop_lat, stop_lng);
                     }
 
-                    ToastMessage.makeToast(context, "finished adding stops");
-                    for (BusStop b: db.getAllStops()){
-                        System.out.println(b.toString());
-                    }
+                    ToastMessage.makeToast(context, "finished adding " + db.countStops() + " stops");
+                    db.close();
                 }
 
             }
