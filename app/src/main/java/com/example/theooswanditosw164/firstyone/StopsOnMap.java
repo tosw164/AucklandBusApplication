@@ -1,6 +1,8 @@
 package com.example.theooswanditosw164.firstyone;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -96,10 +98,10 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     /**
      * Sets up components used in this activity
      */
-    private void setupComponents(){
+    private void setupComponents() {
         button1 = (Button) findViewById(R.id.stopsonmap_button1);
         button1.setOnClickListener(this);
-        button1.setText("but1");
+        button1.setText("Repopulate Stop Table");
 
         button2 = (Button) findViewById(R.id.stopsonmap_button2);
         button2.setOnClickListener(this);
@@ -173,6 +175,16 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             }
         });
 
+        google_map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                Location my_location = getMyLocation();
+                google_map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(my_location.getLatitude(), my_location.getLongitude()), (float)16.5));
+//                google_map.animateCamera(CameraUpdateFactory.zoomTo((float)16.5));
+                return true;
+            }
+        });
+
         //Logic for when user presses info window after selecting marker
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -182,7 +194,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         });
 
         //Gets last known location
-        Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
+        Location my_location = getMyLocation();
 
         //Moves camera based on if location is enabled and something is cached or not
         if (isLocationOn() && my_location != null) {
@@ -196,6 +208,20 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 17));
         }
+    }
+
+    private Location getMyLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null;
+        }
+        return location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
     }
 
     /**
@@ -250,9 +276,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         all_markers = new ConcurrentHashMap<String, Marker>();
     }
 
-
-
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -268,10 +291,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 break;
             case R.id.stopsonmap_FABmenu2:
                 Log.i(TAG, "menu_fab1");
-                Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
-                LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
-                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
-//                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, (float)16.5));
                 break;
             case R.id.stopsonmap_FABmenu3:
                 Log.i(TAG, "menu fab 3");
@@ -327,15 +346,35 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         fab_menu_open = false;      //set flag
         main_fab.animate().rotationBy(-45); //Make Icon + again from x
 
-        //Return containers to behind main action button
-        fab_container1.animate().translationY(0);
-        fab_container2.animate().translationY(0);
-        fab_container3.animate().translationY(0);
+        //Return containers to behind main action button & hide containers
+        fab_container1.animate().translationY(0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (fab_menu_open == false){
+                    fab_container1.setVisibility(View.GONE);
+                }
+            }
+        });
 
-        //Hide containers to prevent accidental press and label from showing.
-        fab_container1.setVisibility(View.GONE);
-        fab_container2.setVisibility(View.GONE);
-        fab_container3.setVisibility(View.GONE);
+        fab_container2.animate().translationY(0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (fab_menu_open == false){
+                    fab_container2.setVisibility(View.GONE);
+                }
+            }
+        });
+        fab_container3.animate().translationY(0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (fab_menu_open == false){
+                    fab_container3.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
 
