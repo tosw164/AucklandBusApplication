@@ -21,17 +21,17 @@ public class AtApiDatabaseRequests extends ATapiCall {
     /**
      * Custom struct-like class to hold passed in Context and generated JSON
      */
-    private class BundledContextJSON {
+    private static class BundledContextInt {
         private Context context;
-        private JSONObject json;
+        private Integer number_of_stops;
 
-        public BundledContextJSON(Context c, JSONObject json){
+        public BundledContextInt(Context c, Integer n_stops){
             this.context = c;
-            this.json = json;
+            this.number_of_stops = n_stops;
         }
 
-        public JSONObject getJSON(){
-            return json;
+        public Integer getNumberOfStops(){
+            return number_of_stops;
         }
 
         public Context getContext(){
@@ -39,35 +39,20 @@ public class AtApiDatabaseRequests extends ATapiCall {
         }
     }
 
-    private void populateDB(Context context){
+    public static void populateDB(Context context){
         new getStopsWorker().execute(context);
     }
 
-    class getStopsWorker extends AsyncTask<Context, Void, BundledContextJSON> {
+    private static class getStopsWorker extends AsyncTask<Context, Void, BundledContextInt> {
         @Override
-        protected BundledContextJSON doInBackground(Context... params) {
-            BundledContextJSON bundle = new BundledContextJSON(params[0], AtApiRequests.getAllStops(params[0]));
+        protected BundledContextInt doInBackground(Context... params) {
+            Context context = params[0];
 
-            return bundle;
-        }
+            JSONObject json = AtApiRequests.getAllStops(params[0]);
+            try {
+                if (json.getString("status").equals("OK")){
+                    JSONArray responses_array = json.getJSONArray("response");
 
-        @Override
-        protected void onPostExecute(BundledContextJSON bundle) {
-            printAllStops(bundle);
-        }
-    }
-
-    private void printAllStops(BundledContextJSON bundle){
-        JSONObject json = bundle.getJSON();
-        Context context = bundle.getContext();
-
-        try {
-            if (json.getString("status").equals("OK")){
-                JSONArray responses_array = json.getJSONArray("response");
-
-                if (responses_array.length() == 0){
-                    ToastMessage.makeToast(context, "Nothing returned");
-                } else {
                     String short_name, stop_id;
                     Double stop_lat, stop_lng;
 
@@ -83,14 +68,27 @@ public class AtApiDatabaseRequests extends ATapiCall {
 
                         db.createStop(stop_id, short_name, stop_lat, stop_lng);
                     }
-
-                    ToastMessage.makeToast(context, "finished adding " + db.countStops() + " stops");
+                    BundledContextInt to_return = new BundledContextInt(context, db.countStops());
                     db.close();
-                }
+                    db.printColumnNames();
+                    return to_return;
 
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            return new BundledContextInt(context, null);
+        }
+
+        @Override
+        protected void onPostExecute(BundledContextInt bundle) {
+            if (bundle.getNumberOfStops() == null){
+                ToastMessage.makeToast(bundle.getContext(), "Error adding stops");
+            } else {
+                ToastMessage.makeToast(bundle.getContext(), "finished adding " + bundle.getNumberOfStops() + " stops");
+            }
         }
     }
+
+
 }
