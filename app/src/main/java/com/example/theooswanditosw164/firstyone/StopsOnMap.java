@@ -1,8 +1,6 @@
 package com.example.theooswanditosw164.firstyone;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -20,7 +18,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.theooswanditosw164.firstyone.atapi.AtApiDatabaseRequests;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
 import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
@@ -98,10 +95,10 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     /**
      * Sets up components used in this activity
      */
-    private void setupComponents() {
+    private void setupComponents(){
         button1 = (Button) findViewById(R.id.stopsonmap_button1);
         button1.setOnClickListener(this);
-        button1.setText("Repopulate Stop Table");
+        button1.setText("but1");
 
         button2 = (Button) findViewById(R.id.stopsonmap_button2);
         button2.setOnClickListener(this);
@@ -163,10 +160,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             return;
         }
 
-        //Adds all stops from DB to list and initialise hashmap for displaying markers
         initialiseStops();
-
-        //Logic and listener for when user moves camera position
         google_map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
@@ -174,18 +168,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 checkZoomAndAddMarkers();
             }
         });
-
-        google_map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                Location my_location = getMyLocation();
-                google_map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(my_location.getLatitude(), my_location.getLongitude()), (float)16.5));
-//                google_map.animateCamera(CameraUpdateFactory.zoomTo((float)16.5));
-                return true;
-            }
-        });
-
-        //Logic for when user presses info window after selecting marker
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -193,12 +175,11 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             }
         });
 
-        //Gets last known location
-        Location my_location = getMyLocation();
+        Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
 
-        //Moves camera based on if location is enabled and something is cached or not
         if (isLocationOn() && my_location != null) {
             google_map.setMyLocationEnabled(true); //TODO make sure this is safe
+
             //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
@@ -208,25 +189,9 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 17));
         }
+
     }
 
-    private Location getMyLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return null;
-        }
-        return location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
-    }
-
-    /**
-     * Method that hides/shows markers based on current map zoom level
-     */
     private void checkZoomAndAddMarkers(){
         if (google_map.getCameraPosition().zoom > 15){
             addMarkersToMap(all_stops);
@@ -240,7 +205,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     /**
-     * Method that displays markers in current map view and hides those that aren't.
      * Based on: https://discgolfsoftware.wordpress.com/2012/12/06/hiding-and-showing-on-screen-markers-with-google-maps-android-api-v2/#comment-3
      * @param stops
      */
@@ -276,42 +240,113 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         all_markers = new ConcurrentHashMap<String, Marker>();
     }
 
+
+    private void populateDB(){
+        new getStopsWorker().execute();
+    }
+
+    class getStopsWorker extends AsyncTask<Void, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            return AtApiRequests.getAllStops(getBaseContext());
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            printAllStops(json);
+        }
+    }
+
+    private void printAllStops(JSONObject json){
+        try {
+            if (json.getString("status").equals("OK")){
+                JSONArray responses_array = json.getJSONArray("response");
+
+                if (responses_array.length() == 0){
+                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
+                } else {
+                    String short_name, stop_id;
+                    Double stop_lat, stop_lng;
+
+                    SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+                    db.printColumnNames();
+                    for (int i = 0; i < responses_array.length(); i++){
+                        JSONObject stop_json = responses_array.getJSONObject(i);
+
+                        short_name = stop_json.getString("stop_name");
+                        stop_id = stop_json.getString("stop_id");
+                        stop_lat = stop_json.getDouble("stop_lat");
+                        stop_lng = stop_json.getDouble("stop_lon");
+
+                        db.createStop(stop_id, short_name, stop_lat, stop_lng);
+                    }
+
+                    Log.i(TAG, "finished adding");
+                    for (BusStop b: db.getAllStops()){
+                        System.out.println(b.toString());
+                    }
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void printFromDB(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        for (BusStop b: db.getAllStops()){
+            System.out.println(b.toString());
+        }
+
+        System.out.println(db.countStops() + "DOne");
+    }
+
+    private void upgradeDB(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.forceUpgrade();
+//        Log.i(TAG, "rows: " + db.countStops());
+        System.out.println("DOne");
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.stopsonmap_button1:
                 Log.i(TAG, "button1");
-                AtApiDatabaseRequests.populateDB(getBaseContext());
+                populateDB();
                 break;
             case R.id.stopsonmap_button2:
                 Log.i(TAG, "button2");
+                printFromDB();
                 break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "menu_fab2");
                 break;
             case R.id.stopsonmap_FABmenu2:
                 Log.i(TAG, "menu_fab1");
+                Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
+                LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
+                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
+//                google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, (float)16.5));
                 break;
             case R.id.stopsonmap_FABmenu3:
                 Log.i(TAG, "menu fab 3");
+                upgradeDB();
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
-                mainFABaction();
+                if (!fab_menu_open){
+                    //open fab menu
+                    animateFloatingActionMenuOpen();
+                } else {
+                    //close fab menu
+                    animateFloatingActionMenuClose();
+                }
                 break;
             default:
                 Log.i(TAG, "default");
                 break;
-        }
-    }
-
-    private void mainFABaction(){
-        if (!fab_menu_open){
-            //open fab menu
-            animateFloatingActionMenuOpen();
-        } else {
-            //close fab menu
-            animateFloatingActionMenuClose();
         }
     }
 
@@ -346,35 +381,15 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         fab_menu_open = false;      //set flag
         main_fab.animate().rotationBy(-45); //Make Icon + again from x
 
-        //Return containers to behind main action button & hide containers
-        fab_container1.animate().translationY(0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (fab_menu_open == false){
-                    fab_container1.setVisibility(View.GONE);
-                }
-            }
-        });
+        //Return containers to behind main action button
+        fab_container1.animate().translationY(0);
+        fab_container2.animate().translationY(0);
+        fab_container3.animate().translationY(0);
 
-        fab_container2.animate().translationY(0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (fab_menu_open == false){
-                    fab_container2.setVisibility(View.GONE);
-                }
-            }
-        });
-        fab_container3.animate().translationY(0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (fab_menu_open == false){
-                    fab_container3.setVisibility(View.GONE);
-                }
-            }
-        });
+        //Hide containers to prevent accidental press and label from showing.
+        fab_container1.setVisibility(View.GONE);
+        fab_container2.setVisibility(View.GONE);
+        fab_container3.setVisibility(View.GONE);
     }
 
 
