@@ -53,7 +53,6 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
     public void forceUpgrade(){
         SQLiteDatabase db = this.getWritableDatabase();
         onUpgrade(db, DATABASE_VERSION, DATABASE_VERSION+1);
-//        DATABASE_VERSION += 1;
     }
 
     /**
