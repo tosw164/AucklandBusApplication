@@ -3,6 +3,7 @@ package com.example.theooswanditosw164.firstyone;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
@@ -82,6 +84,11 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
         SupportMapFragment map_fragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        //Change the Mylocation button icon in map view
+        ImageView location_button = (ImageView) map_fragment.getView().findViewById(2);
+        location_button.setImageResource(R.drawable.ic_gps_fixed_black_48dp);
+
         map_fragment.getMapAsync(this);
     }
 
