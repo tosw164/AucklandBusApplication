@@ -160,7 +160,10 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             return;
         }
 
+        //Adds all stops from DB to list and initialise hashmap for displaying markers
         initialiseStops();
+
+        //Logic and listener for when user moves camera position
         google_map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
@@ -168,6 +171,8 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 checkZoomAndAddMarkers();
             }
         });
+
+        //Logic for when user presses info window after selecting marker
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -175,11 +180,12 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             }
         });
 
+        //Gets last known location
         Location my_location = location_manager.getLastKnownLocation(location_manager.getBestProvider(new Criteria(), true));
 
+        //Moves camera based on if location is enabled and something is cached or not
         if (isLocationOn() && my_location != null) {
             google_map.setMyLocationEnabled(true); //TODO make sure this is safe
-
             //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
@@ -189,9 +195,11 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 17));
         }
-
     }
 
+    /**
+     * Method that hides/shows markers based on current map zoom level
+     */
     private void checkZoomAndAddMarkers(){
         if (google_map.getCameraPosition().zoom > 15){
             addMarkersToMap(all_stops);
@@ -205,6 +213,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     /**
+     * Method that displays markers in current map view and hides those that aren't.
      * Based on: https://discgolfsoftware.wordpress.com/2012/12/06/hiding-and-showing-on-screen-markers-with-google-maps-android-api-v2/#comment-3
      * @param stops
      */
@@ -241,73 +250,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
 
-    private void populateDB(){
-        new getStopsWorker().execute();
-    }
 
-    class getStopsWorker extends AsyncTask<Void, Void, JSONObject> {
-        @Override
-        protected JSONObject doInBackground(Void... params) {
-            return AtApiRequests.getAllStops(getBaseContext());
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject json) {
-            printAllStops(json);
-        }
-    }
-
-    private void printAllStops(JSONObject json){
-        try {
-            if (json.getString("status").equals("OK")){
-                JSONArray responses_array = json.getJSONArray("response");
-
-                if (responses_array.length() == 0){
-                    ToastMessage.makeToast(getBaseContext(), "Nothing returned");
-                } else {
-                    String short_name, stop_id;
-                    Double stop_lat, stop_lng;
-
-                    SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
-                    db.printColumnNames();
-                    for (int i = 0; i < responses_array.length(); i++){
-                        JSONObject stop_json = responses_array.getJSONObject(i);
-
-                        short_name = stop_json.getString("stop_name");
-                        stop_id = stop_json.getString("stop_id");
-                        stop_lat = stop_json.getDouble("stop_lat");
-                        stop_lng = stop_json.getDouble("stop_lon");
-
-                        db.createStop(stop_id, short_name, stop_lat, stop_lng);
-                    }
-
-                    Log.i(TAG, "finished adding");
-                    for (BusStop b: db.getAllStops()){
-                        System.out.println(b.toString());
-                    }
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void printFromDB(){
-        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
-        for (BusStop b: db.getAllStops()){
-            System.out.println(b.toString());
-        }
-
-        System.out.println(db.countStops() + "DOne");
-    }
-
-    private void upgradeDB(){
-        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
-        db.forceUpgrade();
-//        Log.i(TAG, "rows: " + db.countStops());
-        System.out.println("DOne");
-    }
 
     @Override
     public void onClick(View v) {
@@ -318,7 +261,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 break;
             case R.id.stopsonmap_button2:
                 Log.i(TAG, "button2");
-                printFromDB();
                 break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "menu_fab2");
@@ -332,7 +274,6 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 break;
             case R.id.stopsonmap_FABmenu3:
                 Log.i(TAG, "menu fab 3");
-                upgradeDB();
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
