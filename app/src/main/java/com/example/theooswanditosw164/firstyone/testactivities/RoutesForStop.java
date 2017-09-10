@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone;
+package com.example.theooswanditosw164.firstyone.testactivities;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.theooswanditosw164.firstyone.atapi.ATapiCall;
+import com.example.theooswanditosw164.firstyone.R;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 
 import org.json.JSONArray;
@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class RoutesForStop extends AppCompatActivity implements View.OnClickListener {
 

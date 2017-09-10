@@ -39,14 +39,15 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".testactivities.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".NewMapActivity" />
-        <activity android:name=".ATtest" />
-        <activity android:name=".RoutesForStop" />
-        <activity android:name=".RouteOnMap" />
-        <activity android:name=".RealtimeTimetable"/>
-        <activity android:name=".StopsOnMap"/>
+        <activity android:name=".testactivities.NewMapActivity" />
+        <activity android:name=".testactivities.ATtest" />
+        <activity android:name=".testactivities.RoutesForStop" />
+        <activity android:name=".testactivities.RouteOnMap" />
+        <activity android:name=".testactivities.RealtimeTimetable" />
+        <activity android:name=".StopsOnMap" />
+        <activity android:name=".RealtimeBoardStop"/>
     </application>
 
 </manifest>

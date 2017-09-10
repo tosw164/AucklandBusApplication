@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiDatabaseRequests;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
+import com.example.theooswanditosw164.firstyone.dataclasses.ActivitySwitchContainer;
 import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
 import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
@@ -105,7 +106,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
 
         button2 = (Button) findViewById(R.id.stopsonmap_button2);
         button2.setOnClickListener(this);
-        button2.setText("but2");
+        button2.setText("Change To Realtime");
 
         //Logic for fab menu
 //        https://stackoverflow.com/questions/30699302/android-design-support-library-fab-menu
@@ -189,7 +190,11 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Log.i(TAG, marker.getSnippet());
+                Log.i(TAG, marker.getTitle());
+                HashMap<String, String> stopnumber = new HashMap<String, String>();
+                stopnumber.put("stop_number", marker.getTitle());
+//                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), ".RealtimeBoardStop"));
+                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), "RealtimeBoardStop"));
             }
         });
 
@@ -276,6 +281,10 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         all_markers = new ConcurrentHashMap<String, Marker>();
     }
 
+    private void realtimeStopLogic(){
+        ChangeActivity.launchIntent(new ActivitySwitchContainer(null, getBaseContext(), "testactivities.RealtimeTimetable"));
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -284,7 +293,8 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 AtApiDatabaseRequests.populateDB(getBaseContext());
                 break;
             case R.id.stopsonmap_button2:
-                Log.i(TAG, "button2");
+                Log.i(TAG, "Change to realtime");
+                realtimeStopLogic();
                 break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "menu_fab2");

@@ -1,8 +1,9 @@
-package com.example.theooswanditosw164.firstyone;
+package com.example.theooswanditosw164.firstyone.testactivities;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.example.theooswanditosw164.firstyone.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

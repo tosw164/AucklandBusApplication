@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone;
+package com.example.theooswanditosw164.firstyone.testactivities;
 
 import android.Manifest;
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.theooswanditosw164.firstyone.R;
 import com.example.theooswanditosw164.firstyone.atapi.ATapiCall;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
