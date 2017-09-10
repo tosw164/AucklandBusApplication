@@ -190,7 +190,11 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Log.i(TAG, marker.getSnippet());
+                Log.i(TAG, marker.getTitle());
+                HashMap<String, String> stopnumber = new HashMap<String, String>();
+                stopnumber.put("stop_number", marker.getTitle());
+//                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), ".RealtimeBoardStop"));
+                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), "RealtimeBoardStop"));
             }
         });
 

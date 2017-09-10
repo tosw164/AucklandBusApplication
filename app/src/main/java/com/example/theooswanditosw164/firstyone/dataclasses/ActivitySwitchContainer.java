@@ -3,23 +3,25 @@ package com.example.theooswanditosw164.firstyone.dataclasses;
 import android.content.Context;
 import android.os.Bundle;
 
+import java.util.HashMap;
+
 /**
  * Created by TheoOswandi on 9/09/2017.
  */
 
 public class ActivitySwitchContainer {
-    Bundle bundle;
+    HashMap<String, String> extras;
     Context context;
     String layout;
 
-    public ActivitySwitchContainer(Bundle bundle, Context context, String layout_tag){
-        this.bundle = bundle;
+    public ActivitySwitchContainer(HashMap<String, String> extras, Context context, String layout_tag){
+        this.extras = extras;
         this.context = context;
         this.layout = layout_tag;
     }
 
-    public Bundle getBundle() {
-        return bundle;
+    public HashMap<String, String> getExtras() {
+        return extras;
     }
 
     public Context getContext() {
