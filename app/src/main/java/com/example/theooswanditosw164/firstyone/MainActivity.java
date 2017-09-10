@@ -64,7 +64,8 @@ public class MainActivity extends Activity implements OnClickListener{
     private void launch_intent(String layout_tag){
         Class my_class = null;
         try {
-            my_class = Class.forName("com.example.theooswanditosw164.firstyone." + layout_tag);
+            String classname = "com.example.theooswanditosw164.firstyone." + layout_tag;
+            my_class = Class.forName(classname);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
