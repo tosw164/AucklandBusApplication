@@ -3,8 +3,10 @@ package com.example.theooswanditosw164.firstyone;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -37,6 +39,9 @@ public class RealtimeBoardStop extends AppCompatActivity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_realtime_board_stop);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.realtime_stopsboard_toolbar);
+        setSupportActionBar(toolbar);
+
         //Get stop number from passed in bundle
 //        String stop_number = savedInstanceState.getString("stop_number");
         String stop_number = getIntent().getExtras().getString("stop_number");
@@ -53,7 +58,12 @@ public class RealtimeBoardStop extends AppCompatActivity {
 
         new getRealtimeTimetableData().execute(stop_number);
 
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_realtimeboard_for_stop, menu);
+        return true;
     }
 
     private static String formatTime(String raw){
