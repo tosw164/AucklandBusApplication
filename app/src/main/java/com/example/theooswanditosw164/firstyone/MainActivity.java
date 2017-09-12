@@ -8,9 +8,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.content.Intent;
 
-import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
-import com.example.theooswanditosw164.firstyone.dataclasses.HashMapContainers;
-
 
 public class MainActivity extends Activity implements OnClickListener{
 
