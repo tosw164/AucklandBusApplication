@@ -2,9 +2,7 @@ package com.example.theooswanditosw164.firstyone.atapi;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
 import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 
@@ -57,7 +55,12 @@ public class AtApiDatabaseRequests extends ATapiCall {
                     Double stop_lat, stop_lng;
 
                     SqliteTransportDatabase db = new SqliteTransportDatabase(context);
-                    db.printColumnNames();
+                    db.stopsTablePrintColumnNames();
+
+                    if (responses_array.length() > 0){
+                        db.resetStopsTable();
+                    }
+
                     for (int i = 0; i < responses_array.length(); i++){
                         JSONObject stop_json = responses_array.getJSONObject(i);
 
@@ -66,11 +69,13 @@ public class AtApiDatabaseRequests extends ATapiCall {
                         stop_lat = stop_json.getDouble("stop_lat");
                         stop_lng = stop_json.getDouble("stop_lon");
 
+                        System.out.println(i + "/" + responses_array.length());
                         db.createStop(stop_id, short_name, stop_lat, stop_lng);
+//                        System.out.print(i + " ");
                     }
                     BundledContextInt to_return = new BundledContextInt(context, db.countStops());
                     db.close();
-                    db.printColumnNames();
+                    db.stopsTablePrintColumnNames();
                     return to_return;
 
                 }
