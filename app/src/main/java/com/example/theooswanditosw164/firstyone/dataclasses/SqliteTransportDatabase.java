@@ -199,8 +199,8 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         FavouriteStop stop = null;
 
-        Cursor cursor = db.query(STOPS_TABLENAME, new String[] { STOPS_STOPID,
-                        STOPS_SHORTNAME, STOPS_LAT, STOPS_LNG }, STOPS_STOPID + "=?",
+        Cursor cursor = db.query(FAVOURITES_TABLENAME, new String[] { FAVOURITES_STOPNUMBER,
+                        FAVOURITES_CUSTOMNAME}, FAVOURITES_STOPNUMBER + "=?",
                 new String[] { String.valueOf(number) }, null, null, null, null);
 
         if (cursor.getCount() >= 1) {
@@ -265,7 +265,7 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
     public void deleteFavouriteStop(FavouriteStop stop){
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(STOPS_TABLENAME, STOPS_STOPID + " =?", new String[]{stop.getStopNumber()});
+        db.delete(FAVOURITES_TABLENAME, FAVOURITES_STOPNUMBER + " =?", new String[]{stop.getStopNumber()});
         db.close();
     }
 }

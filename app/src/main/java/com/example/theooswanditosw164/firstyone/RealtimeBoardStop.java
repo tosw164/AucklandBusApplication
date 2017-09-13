@@ -34,7 +34,7 @@ public class RealtimeBoardStop extends AppCompatActivity{
     private static final String TAG = com.example.theooswanditosw164.firstyone.RealtimeBoardStop.class.getSimpleName();
 
     private static final int HOURS_TO_GET = 12;
-    private static boolean IS_FAVOURITE = false;
+    private static boolean IS_FAVOURITE;
 
     String stop_number;
     List<String> listview_contents;
@@ -51,6 +51,13 @@ public class RealtimeBoardStop extends AppCompatActivity{
         //Get stop number from passed in bundle
 //        String stop_number = savedInstanceState.getString("stop_number");
         stop_number = getIntent().getExtras().getString("stop_number");
+        System.out.println("STOP NUMBER ON OPEN REALTIMETIMETABLE: " + stop_number);
+
+
+        //Set is favourite boolean depending on if stop already exist in favourites table
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        IS_FAVOURITE = (db.getFavouriteStop(stop_number) != null);
+        db.close();
 
         listview_contents = new ArrayList<String>();
 
