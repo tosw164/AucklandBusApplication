@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
+import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.FavouriteStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 
 import org.json.JSONArray;
@@ -87,10 +90,12 @@ public class RealtimeBoardStop extends AppCompatActivity{
 
                 if (IS_FAVOURITE){
                     //TODO add to database
+                    addStopToFavourites();
                     ToastMessage.makeToast(getBaseContext(), stop_number + " added to favourites");
                     item.setIcon(R.drawable.ic_favorite_black_24dp);
                 } else {
                     //TODO remove from database
+                    removeStopFromFavourites();
                     ToastMessage.makeToast(getBaseContext(), stop_number + " removed from favourites");
                     item.setIcon(R.drawable.ic_favorite_border_black_24dp);
                 }
@@ -100,12 +105,29 @@ public class RealtimeBoardStop extends AppCompatActivity{
             case R.id.menu_action_settings:
                 Log.i(TAG, "Settings");
                 break;
-
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    private void addStopToFavourites(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.createFavouriteStop(stop_number, "TEST");
+
+        ToastMessage.makeToast(getBaseContext(), "added current stop from db");
+        db.printAllFavouriteStops();
+
+        db.close();
+    }
+
+    private void removeStopFromFavourites(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.deleteFavouriteStop(new FavouriteStop(stop_number, ""));
+
+        ToastMessage.makeToast(getBaseContext(), "removed current stop from db");
+        db.printAllFavouriteStops();
+
+        db.close();
+    }
 
 
     private static String formatTime(String raw){
