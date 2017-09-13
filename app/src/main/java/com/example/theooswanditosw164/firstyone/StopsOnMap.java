@@ -298,12 +298,17 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "menu_fab2");
+                SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+                db.resetStopsTable();
+                db.close();
                 break;
             case R.id.stopsonmap_FABmenu2:
                 Log.i(TAG, "menu_fab1");
                 break;
             case R.id.stopsonmap_FABmenu3:
-                Log.i(TAG, "menu fab 3");
+                db = new SqliteTransportDatabase(getBaseContext());
+                Log.i(TAG, "menu fab 3 " + db.countStops());
+                db.close();
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
