@@ -24,6 +24,7 @@ import com.example.theooswanditosw164.firstyone.atapi.AtApiDatabaseRequests;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.dataclasses.ActivitySwitchContainer;
 import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.FavouriteStop;
 import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -297,21 +298,16 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 realtimeStopLogic();
                 break;
             case R.id.stopsonmap_FABmenu1:
-                Log.i(TAG, "menu_fab2");
-                SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
-                db.resetStopsTable();
-                db.close();
+                Log.i(TAG, "FAVOURITES");
+                floatingButtonFavouriteFunctionality();
                 break;
             case R.id.stopsonmap_FABmenu2:
-                Log.i(TAG, "menu_fab1");
-                db = new SqliteTransportDatabase(getBaseContext());
-                db.printAllFavouriteStops();
-                db.close();
+                Log.i(TAG, "SEARCH");
+                floatingButtonSearchFunctionality();
                 break;
             case R.id.stopsonmap_FABmenu3:
-                db = new SqliteTransportDatabase(getBaseContext());
-                Log.i(TAG, "menu fab 3 " + db.countStops());
-                db.close();
+                Log.i(TAG, "ADDSTOP ");
+                floatingButtonAddStopFunctionality();
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
@@ -321,6 +317,30 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 Log.i(TAG, "default");
                 break;
         }
+
+    }
+
+    private void floatingButtonSearchFunctionality(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.printAllFavouriteStops();
+        db.close();
+    }
+
+    private void floatingButtonFavouriteFunctionality(){
+        List<FavouriteStop> favourite_stops = new ArrayList<FavouriteStop>();
+
+        SqliteTransportDatabase db =  new SqliteTransportDatabase(getBaseContext());
+        favourite_stops = db.getAllFavouriteStops();
+        db.close();
+
+        
+
+    }
+
+    private void floatingButtonAddStopFunctionality(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        Log.i(TAG, "Number of items in stops database: " + db.countStops());
+        db.close();
     }
 
     private void mainFABaction(){
