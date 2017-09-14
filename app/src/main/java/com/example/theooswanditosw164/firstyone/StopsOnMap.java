@@ -331,64 +331,64 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     private void floatingButtonFavouriteFunctionality(){
-        //Instantiate data from favourite stops database
-        List<FavouriteStop> favourite_stops = new ArrayList<FavouriteStop>();
-        SqliteTransportDatabase db =  new SqliteTransportDatabase(StopsOnMap.this);
-        favourite_stops = db.getAllFavouriteStops();
-        db.close();
-
-        //Setting title and icon for dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(StopsOnMap.this, R.style.AppTheme_NoActionBar);
-        builder.setIcon(R.drawable.ic_favorite_black_24dp);
-        builder.setTitle("Favourite Stops");
-
-        //Adding contents of database to listview
-        final HashMap<String, FavouriteStop> map_favouritestop_customname = new HashMap<String, FavouriteStop>();
-        final ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-
-        String stop_displayed_text;
-        for(FavouriteStop stop: favourite_stops){
-//            if (stop.getCustomName().equals("")){
-//                stop_displayed_text = stop.getStopNumber();
-//            } else {
-//                stop_displayed_text = stop.getCustomName();
-//            }
-            stop_displayed_text = stop.getStopNumber();
-
-            map_favouritestop_customname.put(stop_displayed_text, stop);
-
-            array_adapter.add(stop_displayed_text);
-            System.out.println("FV" + stop_displayed_text);
-        }
-
-        //Set cancel button to dismiss the dialog if needed
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        //Set adapter
-        builder.setAdapter(array_adapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                FavouriteStop relevant_stop = map_favouritestop_customname.get(array_adapter.getItem(which));
-                Log.i(TAG, relevant_stop.getStopNumber());
-
-                HashMap<String, String> stopnumber = new HashMap<String, String>();
-                stopnumber.put("stop_number", relevant_stop.getStopNumber());
-//                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), ".RealtimeBoardStop"));
-                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), "RealtimeBoardStop"));
-            }
-        });
-
-        builder.show();
-
+        ChangeActivity.launchIntent(new ActivitySwitchContainer(new HashMap<String, String>(), getBaseContext(), "FavouritesSelector"));
     }
 
     private void floatingButtonAddStopFunctionality(){
-        ChangeActivity.launchIntent(new ActivitySwitchContainer(new HashMap<String, String>(), getBaseContext(), "FavouritesSelector"));
+        //        //Instantiate data from favourite stops database
+//        List<FavouriteStop> favourite_stops = new ArrayList<FavouriteStop>();
+//        SqliteTransportDatabase db =  new SqliteTransportDatabase(StopsOnMap.this);
+//        favourite_stops = db.getAllFavouriteStops();
+//        db.close();
+//
+//        //Setting title and icon for dialog
+//        AlertDialog.Builder builder = new AlertDialog.Builder(StopsOnMap.this, R.style.AppTheme_NoActionBar);
+//        builder.setIcon(R.drawable.ic_favorite_black_24dp);
+//        builder.setTitle("Favourite Stops");
+//
+//        //Adding contents of database to listview
+//        final HashMap<String, FavouriteStop> map_favouritestop_customname = new HashMap<String, FavouriteStop>();
+//        final ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+//
+//        String stop_displayed_text;
+//        for(FavouriteStop stop: favourite_stops){
+////            if (stop.getCustomName().equals("")){
+////                stop_displayed_text = stop.getStopNumber();
+////            } else {
+////                stop_displayed_text = stop.getCustomName();
+////            }
+//            stop_displayed_text = stop.getStopNumber();
+//
+//            map_favouritestop_customname.put(stop_displayed_text, stop);
+//
+//            array_adapter.add(stop_displayed_text);
+//            System.out.println("FV" + stop_displayed_text);
+//        }
+//
+//        //Set cancel button to dismiss the dialog if needed
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        //Set adapter
+//        builder.setAdapter(array_adapter, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                FavouriteStop relevant_stop = map_favouritestop_customname.get(array_adapter.getItem(which));
+//                Log.i(TAG, relevant_stop.getStopNumber());
+//
+//                HashMap<String, String> stopnumber = new HashMap<String, String>();
+//                stopnumber.put("stop_number", relevant_stop.getStopNumber());
+////                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), ".RealtimeBoardStop"));
+//                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), "RealtimeBoardStop"));
+//            }
+//        });
+//
+//        builder.show();
+
     }
 
     private void mainFABaction(){
