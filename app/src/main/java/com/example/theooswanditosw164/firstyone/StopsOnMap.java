@@ -326,6 +326,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     private void floatingButtonSearchFunctionality(){
         SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
         db.printAllFavouriteStops();
+        Log.i(TAG, "Number of items in stops database: " + db.countStops());
         db.close();
     }
 
@@ -387,9 +388,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     private void floatingButtonAddStopFunctionality(){
-        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
-        Log.i(TAG, "Number of items in stops database: " + db.countStops());
-        db.close();
+        ChangeActivity.launchIntent(new ActivitySwitchContainer(new HashMap<String, String>(), getBaseContext(), "FavouritesSelector"));
     }
 
     private void mainFABaction(){
