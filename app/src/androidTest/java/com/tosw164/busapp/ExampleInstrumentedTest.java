@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone;
+package com.tosw164.busapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.theooswanditosw164.firstyone", appContext.getPackageName());
+        assertEquals("com.tosw164.busapp", appContext.getPackageName());
     }
 }

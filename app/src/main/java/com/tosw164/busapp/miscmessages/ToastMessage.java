@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone.miscmessages;
+package com.tosw164.busapp.miscmessages;
 
 import android.content.Context;
 import android.widget.Toast;

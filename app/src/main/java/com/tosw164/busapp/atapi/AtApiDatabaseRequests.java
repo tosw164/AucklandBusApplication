@@ -1,10 +1,10 @@
-package com.example.theooswanditosw164.firstyone.atapi;
+package com.tosw164.busapp.atapi;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
-import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
+import com.tosw164.busapp.dataclasses.SqliteTransportDatabase;
+import com.tosw164.busapp.miscmessages.ToastMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;

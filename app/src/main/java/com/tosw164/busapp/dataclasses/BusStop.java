@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone.dataclasses;
+package com.tosw164.busapp.dataclasses;
 
 /**
  * Created by TheoOswandi on 8/09/2017.

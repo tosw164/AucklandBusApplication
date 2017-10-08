@@ -1,11 +1,11 @@
-package com.example.theooswanditosw164.firstyone;
+package com.tosw164.busapp;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.theooswanditosw164.firstyone.dataclasses.ActivitySwitchContainer;
+import com.tosw164.busapp.dataclasses.ActivitySwitchContainer;
 
 import java.util.HashMap;
 
@@ -24,7 +24,7 @@ public class ChangeActivity extends Activity {
 
         Class my_class = null;
         try {
-            my_class = Class.forName("com.example.theooswanditosw164.firstyone." + layout_tag);
+            my_class = Class.forName("com.tosw164.busapp." + layout_tag);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

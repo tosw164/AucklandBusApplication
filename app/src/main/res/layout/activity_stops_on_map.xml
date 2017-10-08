@@ -43,7 +43,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.example.theooswanditosw164.firstyone.StopsOnMap" />
+            tools:context="com.tosw164.busapp.firstyone.com.example.firstyone.StopsOnMap" />
 
         <LinearLayout
             android:layout_width="wrap_content"

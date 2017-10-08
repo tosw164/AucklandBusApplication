@@ -1,35 +1,28 @@
-package com.example.theooswanditosw164.firstyone;
+package com.tosw164.busapp;
 
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.theooswanditosw164.firstyone.atapi.AtApiDatabaseRequests;
-import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
-import com.example.theooswanditosw164.firstyone.dataclasses.ActivitySwitchContainer;
-import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
-import com.example.theooswanditosw164.firstyone.dataclasses.FavouriteStop;
-import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
-import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
+import com.tosw164.busapp.atapi.AtApiDatabaseRequests;
+import com.tosw164.busapp.dataclasses.ActivitySwitchContainer;
+import com.tosw164.busapp.dataclasses.BusStop;
+import com.tosw164.busapp.dataclasses.SqliteTransportDatabase;
+import com.tosw164.busapp.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,11 +32,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -286,7 +274,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     private void realtimeStopLogic(){
-        ChangeActivity.launchIntent(new ActivitySwitchContainer(null, getBaseContext(), "testactivities.RealtimeTimetable"));
+        ChangeActivity.launchIntent(new ActivitySwitchContainer(null, getBaseContext(), "RealtimeTimetable"));
     }
 
     @Override

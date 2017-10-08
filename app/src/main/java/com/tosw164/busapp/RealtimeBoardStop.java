@@ -1,26 +1,22 @@
-package com.example.theooswanditosw164.firstyone;
+package com.tosw164.busapp;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
-import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
-import com.example.theooswanditosw164.firstyone.dataclasses.FavouriteStop;
-import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
-import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
+import com.tosw164.busapp.dataclasses.FavouriteStop;
+import com.tosw164.busapp.miscmessages.ToastMessage;
+import com.tosw164.busapp.R;
+import com.tosw164.busapp.atapi.AtApiRequests;
+import com.tosw164.busapp.dataclasses.SqliteTransportDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +27,7 @@ import java.util.List;
 
 public class RealtimeBoardStop extends AppCompatActivity{
 
-    private static final String TAG = com.example.theooswanditosw164.firstyone.RealtimeBoardStop.class.getSimpleName();
+    private static final String TAG = RealtimeBoardStop.class.getSimpleName();
 
     private static final int HOURS_TO_GET = 12;
     private static boolean IS_FAVOURITE;
@@ -185,7 +181,7 @@ public class RealtimeBoardStop extends AppCompatActivity{
                 return;
             }
 
-            ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(com.example.theooswanditosw164.firstyone.RealtimeBoardStop.this, android.R.layout.simple_list_item_1, incoming_routes);
+            ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RealtimeBoardStop.this, android.R.layout.simple_list_item_1, incoming_routes);
             timetable_view.setAdapter(array_adapter);
 
 //            super.onPostExecute(incoming_routes);

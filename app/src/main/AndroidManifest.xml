@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.theooswanditosw164.firstyone">
+    package="com.tosw164.busapp">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -39,11 +39,10 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".RealtimeTimetable" />
-        <!--<activity android:name=".StopsOnMap" />-->
         <activity
             android:name=".RealtimeBoardStop"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FavouritesSelector" android:theme="@android:style/Theme.Material.Dialog.NoActionBar" android:excludeFromRecents="true"></activity>
+        <activity android:name="com.tosw164.busapp.FavouritesSelector" android:theme="@android:style/Theme.Material.Dialog.NoActionBar" android:excludeFromRecents="true"></activity>
     </application>
 
 </manifest>

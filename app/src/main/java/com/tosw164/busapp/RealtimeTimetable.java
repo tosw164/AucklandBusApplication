@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone;
+package com.tosw164.busapp;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
-import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
+import com.tosw164.busapp.R;
+import com.tosw164.busapp.atapi.AtApiRequests;
+import com.tosw164.busapp.miscmessages.ToastMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;

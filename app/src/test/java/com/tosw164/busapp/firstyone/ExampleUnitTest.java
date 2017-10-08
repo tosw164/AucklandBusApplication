@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone;
+package com.tosw164.busapp.firstyone;
 
 import org.junit.Test;
 
