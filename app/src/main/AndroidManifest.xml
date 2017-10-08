@@ -38,13 +38,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".testactivities.MapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity android:name=".testactivities.NewMapActivity" />
-        <activity android:name=".testactivities.ATtest" />
-        <activity android:name=".testactivities.RoutesForStop" />
-        <activity android:name=".testactivities.RouteOnMap" />
         <activity android:name=".testactivities.RealtimeTimetable" />
         <!--<activity android:name=".StopsOnMap" />-->
         <activity
