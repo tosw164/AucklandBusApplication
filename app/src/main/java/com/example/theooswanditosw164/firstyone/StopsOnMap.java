@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -14,8 +15,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +27,7 @@ import com.example.theooswanditosw164.firstyone.atapi.AtApiDatabaseRequests;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.dataclasses.ActivitySwitchContainer;
 import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.FavouriteStop;
 import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -190,7 +194,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Log.i(TAG, marker.getTitle());
+                Log.i(TAG, marker.getTitle() + " " + marker.getSnippet());
                 HashMap<String, String> stopnumber = new HashMap<String, String>();
                 stopnumber.put("stop_number", marker.getTitle());
 //                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), ".RealtimeBoardStop"));
@@ -297,13 +301,16 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 realtimeStopLogic();
                 break;
             case R.id.stopsonmap_FABmenu1:
-                Log.i(TAG, "menu_fab2");
+                Log.i(TAG, "FAVOURITES");
+                floatingButtonFavouriteFunctionality();
                 break;
             case R.id.stopsonmap_FABmenu2:
-                Log.i(TAG, "menu_fab1");
+                Log.i(TAG, "SEARCH");
+                floatingButtonSearchFunctionality();
                 break;
             case R.id.stopsonmap_FABmenu3:
-                Log.i(TAG, "menu fab 3");
+                Log.i(TAG, "ADDSTOP ");
+                floatingButtonAddStopFunctionality();
                 break;
             case R.id.stopsonmap_mainFAB:
                 Log.i(TAG, "MainFab");
@@ -313,6 +320,75 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 Log.i(TAG, "default");
                 break;
         }
+
+    }
+
+    private void floatingButtonSearchFunctionality(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.printAllFavouriteStops();
+        Log.i(TAG, "Number of items in stops database: " + db.countStops());
+        db.close();
+    }
+
+    private void floatingButtonFavouriteFunctionality(){
+        ChangeActivity.launchIntent(new ActivitySwitchContainer(new HashMap<String, String>(), getBaseContext(), "FavouritesSelector"));
+    }
+
+    private void floatingButtonAddStopFunctionality(){
+        //        //Instantiate data from favourite stops database
+//        List<FavouriteStop> favourite_stops = new ArrayList<FavouriteStop>();
+//        SqliteTransportDatabase db =  new SqliteTransportDatabase(StopsOnMap.this);
+//        favourite_stops = db.getAllFavouriteStops();
+//        db.close();
+//
+//        //Setting title and icon for dialog
+//        AlertDialog.Builder builder = new AlertDialog.Builder(StopsOnMap.this, R.style.AppTheme_NoActionBar);
+//        builder.setIcon(R.drawable.ic_favorite_black_24dp);
+//        builder.setTitle("Favourite Stops");
+//
+//        //Adding contents of database to listview
+//        final HashMap<String, FavouriteStop> map_favouritestop_customname = new HashMap<String, FavouriteStop>();
+//        final ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+//
+//        String stop_displayed_text;
+//        for(FavouriteStop stop: favourite_stops){
+////            if (stop.getCustomName().equals("")){
+////                stop_displayed_text = stop.getStopNumber();
+////            } else {
+////                stop_displayed_text = stop.getCustomName();
+////            }
+//            stop_displayed_text = stop.getStopNumber();
+//
+//            map_favouritestop_customname.put(stop_displayed_text, stop);
+//
+//            array_adapter.add(stop_displayed_text);
+//            System.out.println("FV" + stop_displayed_text);
+//        }
+//
+//        //Set cancel button to dismiss the dialog if needed
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        //Set adapter
+//        builder.setAdapter(array_adapter, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                FavouriteStop relevant_stop = map_favouritestop_customname.get(array_adapter.getItem(which));
+//                Log.i(TAG, relevant_stop.getStopNumber());
+//
+//                HashMap<String, String> stopnumber = new HashMap<String, String>();
+//                stopnumber.put("stop_number", relevant_stop.getStopNumber());
+////                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), ".RealtimeBoardStop"));
+//                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), "RealtimeBoardStop"));
+//            }
+//        });
+//
+//        builder.show();
+
     }
 
     private void mainFABaction(){

@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone.dataclasses;
+package com.example.theooswanditosw164.firstyone.dataclasses.old;
 
 import android.content.Context;
 import android.os.AsyncTask;

@@ -3,8 +3,11 @@ package com.example.theooswanditosw164.firstyone;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -14,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
+import com.example.theooswanditosw164.firstyone.dataclasses.BusStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.FavouriteStop;
+import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 
 import org.json.JSONArray;
@@ -23,12 +29,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RealtimeBoardStop extends AppCompatActivity {
+public class RealtimeBoardStop extends AppCompatActivity{
 
     private static final String TAG = com.example.theooswanditosw164.firstyone.RealtimeBoardStop.class.getSimpleName();
 
     private static final int HOURS_TO_GET = 12;
+    private static boolean IS_FAVOURITE;
 
+    String stop_number;
     List<String> listview_contents;
     ListView timetable_view;
 
@@ -37,9 +45,19 @@ public class RealtimeBoardStop extends AppCompatActivity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_realtime_board_stop);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.realtime_stopsboard_toolbar);
+        setSupportActionBar(toolbar);
+
         //Get stop number from passed in bundle
 //        String stop_number = savedInstanceState.getString("stop_number");
-        String stop_number = getIntent().getExtras().getString("stop_number");
+        stop_number = getIntent().getExtras().getString("stop_number");
+        System.out.println("STOP NUMBER ON OPEN REALTIMETIMETABLE: " + stop_number);
+
+
+        //Set is favourite boolean depending on if stop already exist in favourites table
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        IS_FAVOURITE = (db.getFavouriteStop(stop_number) != null);
+        db.close();
 
         listview_contents = new ArrayList<String>();
 
@@ -52,9 +70,72 @@ public class RealtimeBoardStop extends AppCompatActivity {
         });
 
         new getRealtimeTimetableData().execute(stop_number);
-
-
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_realtimeboard_for_stop, menu);
+
+        MenuItem favourite = menu.findItem(R.id.menu_action_favorite);
+        if (IS_FAVOURITE){
+            favourite.setIcon(R.drawable.ic_favorite_black_24dp);
+        } else {
+            favourite.setIcon(R.drawable.ic_favorite_border_black_24dp);
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_action_favorite:
+
+                IS_FAVOURITE = !IS_FAVOURITE;
+
+                if (IS_FAVOURITE){
+                    //TODO add to database
+                    addStopToFavourites();
+                    ToastMessage.makeToast(getBaseContext(), stop_number + " added to favourites");
+                    item.setIcon(R.drawable.ic_favorite_black_24dp);
+                } else {
+                    //TODO remove from database
+                    removeStopFromFavourites();
+                    ToastMessage.makeToast(getBaseContext(), stop_number + " removed from favourites");
+                    item.setIcon(R.drawable.ic_favorite_border_black_24dp);
+                }
+                Log.i(TAG, "Favourite");
+                break;
+
+            case R.id.menu_action_settings:
+                Log.i(TAG, "Settings");
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void addStopToFavourites(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.createFavouriteStop(stop_number, "TEST");
+
+        ToastMessage.makeToast(getBaseContext(), "added current stop from db");
+        db.printAllFavouriteStops();
+
+        db.close();
+    }
+
+    private void removeStopFromFavourites(){
+        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+        db.deleteFavouriteStop(new FavouriteStop(stop_number, ""));
+
+        ToastMessage.makeToast(getBaseContext(), "removed current stop from db");
+        db.printAllFavouriteStops();
+
+        db.close();
+    }
+
 
     private static String formatTime(String raw){
         if(raw == null){
@@ -66,6 +147,7 @@ public class RealtimeBoardStop extends AppCompatActivity {
         }
         return "";
     }
+
 
     private class getRealtimeTimetableData extends AsyncTask<String, Void, List<String>>{
 

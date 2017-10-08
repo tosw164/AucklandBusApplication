@@ -57,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:background="@color/white"
                 android:text="Favourites"/>
 
             <android.support.design.widget.FloatingActionButton
@@ -87,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Search"
+                android:background="@color/white"
                 android:layout_gravity="center_vertical">
 
             </TextView>
@@ -118,6 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Stop"
+                android:background="@color/white"
                 android:layout_gravity="center_vertical">
 
             </TextView>

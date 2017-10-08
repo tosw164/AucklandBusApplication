@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone.dataclasses;
+package com.example.theooswanditosw164.firstyone.dataclasses.old;
 
 import com.google.android.gms.maps.model.LatLng;
 

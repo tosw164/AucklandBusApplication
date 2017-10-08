@@ -8,8 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.content.Intent;
 
-import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
-import com.example.theooswanditosw164.firstyone.dataclasses.HashMapContainers;
+import com.example.theooswanditosw164.firstyone.dataclasses.SqliteTransportDatabase;
 
 
 public class MainActivity extends Activity implements OnClickListener{
@@ -79,6 +78,9 @@ public class MainActivity extends Activity implements OnClickListener{
             case R.id.button:
                 i++;
                 the_textview.setText("current count: " + i);
+                SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
+                db.forceUpgrade();
+                db.close();
 //                HashMapContainers.getInstance(getBaseContext()).test();
 //                AtApiRequests.printAllTrips(getBaseContext());
                 break;

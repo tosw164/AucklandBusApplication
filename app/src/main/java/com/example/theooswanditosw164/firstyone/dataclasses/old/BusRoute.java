@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone.dataclasses;
+package com.example.theooswanditosw164.firstyone.dataclasses.old;
 
 /**
  * Created by theooswanditosw164 on 19/03/17.

@@ -47,7 +47,10 @@
         <activity android:name=".testactivities.RouteOnMap" />
         <activity android:name=".testactivities.RealtimeTimetable" />
         <activity android:name=".StopsOnMap" />
-        <activity android:name=".RealtimeBoardStop"/>
+        <activity
+            android:name=".RealtimeBoardStop"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".FavouritesSelector" android:theme="@android:style/Theme.Material.Dialog.NoActionBar" android:excludeFromRecents="true"></activity>
     </application>
 
 </manifest>
