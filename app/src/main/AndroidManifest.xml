@@ -38,7 +38,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".testactivities.RealtimeTimetable" />
+        <activity android:name=".RealtimeTimetable" />
         <!--<activity android:name=".StopsOnMap" />-->
         <activity
             android:name=".RealtimeBoardStop"
