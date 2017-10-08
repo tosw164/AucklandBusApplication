@@ -92,19 +92,19 @@ public class SqliteTransportDatabase extends SQLiteOpenHelper {
         db.close();
     }
 
-        public void createStop(String stop_id, String short_name, Double lat, Double lng){
-            SQLiteDatabase db = this.getWritableDatabase();
+    public void createStop(String stop_id, String short_name, Double lat, Double lng){
+        SQLiteDatabase db = this.getWritableDatabase();
 
-            ContentValues values = new ContentValues();
-            values.put(STOPS_STOPID, stop_id);
-            values.put(STOPS_SHORTNAME, short_name);
-            values.put(STOPS_LAT, lat);
-            values.put(STOPS_LNG, lng);
+        ContentValues values = new ContentValues();
+        values.put(STOPS_STOPID, stop_id);
+        values.put(STOPS_SHORTNAME, short_name);
+        values.put(STOPS_LAT, lat);
+        values.put(STOPS_LNG, lng);
 
-            db.insert(STOPS_TABLENAME, null, values);
-            db.close();
+        db.insert(STOPS_TABLENAME, null, values);
+        db.close();
 
-        }
+    }
 
     /**
      * @return number of stops in StopsTable

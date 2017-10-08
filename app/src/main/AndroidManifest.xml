@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".StopsOnMap">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,7 +46,7 @@
         <activity android:name=".testactivities.RoutesForStop" />
         <activity android:name=".testactivities.RouteOnMap" />
         <activity android:name=".testactivities.RealtimeTimetable" />
-        <activity android:name=".StopsOnMap" />
+        <!--<activity android:name=".StopsOnMap" />-->
         <activity
             android:name=".RealtimeBoardStop"
             android:theme="@style/AppTheme.NoActionBar" />
