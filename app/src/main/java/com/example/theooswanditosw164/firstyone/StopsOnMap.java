@@ -180,15 +180,15 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
             }
         });
 
-        google_map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                Location my_location = getMyLocation();
-                google_map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(my_location.getLatitude(), my_location.getLongitude()), (float)16.5));
-//                google_map.animateCamera(CameraUpdateFactory.zoomTo((float)16.5));
-                return true;
-            }
-        });
+//        google_map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+//            @Override
+//            public boolean onMyLocationButtonClick() {
+//                Location my_location = getMyLocation();
+//                google_map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(my_location.getLatitude(), my_location.getLongitude()), (float)16.5));
+////                google_map.animateCamera(CameraUpdateFactory.zoomTo((float)16.5));
+//                return true;
+//            }
+//        });
 
         //Logic for when user presses info window after selecting marker
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
