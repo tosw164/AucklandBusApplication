@@ -1,4 +1,4 @@
-package com.example.theooswanditosw164.firstyone.testactivities;
+package com.example.theooswanditosw164.firstyone;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.theooswanditosw164.firstyone.R;
 import com.example.theooswanditosw164.firstyone.atapi.AtApiRequests;
 import com.example.theooswanditosw164.firstyone.miscmessages.ToastMessage;
 

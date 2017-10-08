@@ -61,15 +61,19 @@ public class AtApiDatabaseRequests extends ATapiCall {
                         db.resetStopsTable();
                     }
 
+                    System.out.println(responses_array.length());
                     for (int i = 0; i < responses_array.length(); i++){
                         JSONObject stop_json = responses_array.getJSONObject(i);
 
                         short_name = stop_json.getString("stop_name");
                         stop_id = stop_json.getString("stop_id");
+
+                        //Due to changes, need to get number before first -
+                        stop_id = stop_id.split("\\-")[0];
                         stop_lat = stop_json.getDouble("stop_lat");
                         stop_lng = stop_json.getDouble("stop_lon");
 
-                        System.out.println(i + "/" + responses_array.length());
+                        System.out.println(i + "/" + responses_array.length() + short_name + " " + stop_id + " ");
                         db.createStop(stop_id, short_name, stop_lat, stop_lng);
 //                        System.out.print(i + " ");
                     }
