@@ -36,7 +36,7 @@ public class AtApiRequests extends ATapiCall{
     public static JSONObject getRealtimeTimetableFromStopNumber(Context c, String stop_number, String hours){
         String url_to_use = "https://api.at.govt.nz/v2/public-restricted/" +
                 "departures/" + stop_number + "?" +
-                "subscription-key=323741614c1c4b9083299adefe100aa6" +
+                "subscription-key=" + ATapiKey.getRealtimeKey() +
                 "&hours=" + hours;
         return fetchJSONfromURL(c, url_to_use);
     }
