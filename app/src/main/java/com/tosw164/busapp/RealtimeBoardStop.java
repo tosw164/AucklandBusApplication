@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class RealtimeBoardStop extends AppCompatActivity{
@@ -37,6 +38,7 @@ public class RealtimeBoardStop extends AppCompatActivity{
     List<String> listview_contents;
     ListView timetable_view;
     SwipeRefreshLayout refresh_layout;
+
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -61,8 +63,7 @@ public class RealtimeBoardStop extends AppCompatActivity{
         refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                System.out.println("REFRESH");
-                refresh_layout.setRefreshing(false);
+                new getRealtimeTimetableData().execute(stop_number);
             }
         });
 
@@ -79,7 +80,6 @@ public class RealtimeBoardStop extends AppCompatActivity{
         new getRealtimeTimetableData().execute(stop_number);
 
     }
-
 
     /**
      * Method that instantiates the favourite heart icon depending on if current stop is favourited
@@ -196,7 +196,7 @@ public class RealtimeBoardStop extends AppCompatActivity{
                                 "\t" + formatTime(trip.get("scheduledDepartureTime").toString()) +
                                 " " + formatTime(trip.get("expectedDepartureTime").toString()));
                     }
-                    timetable_data.add(" " + movements.length());
+                    timetable_data.add(" " + movements.length() + " " + Calendar.getInstance().getTime());
 
 
                 }
@@ -224,11 +224,14 @@ public class RealtimeBoardStop extends AppCompatActivity{
         protected void onPostExecute(List<String> incoming_routes) {
             if (incoming_routes == null){
                 ToastMessage.makeToast(getBaseContext(), "No available routes");
-                return;
+            } else {
+                ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RealtimeBoardStop.this, android.R.layout.simple_list_item_1, incoming_routes);
+                timetable_view.setAdapter(array_adapter);
             }
 
-            ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RealtimeBoardStop.this, android.R.layout.simple_list_item_1, incoming_routes);
-            timetable_view.setAdapter(array_adapter);
+            if(refresh_layout.isRefreshing()){
+                refresh_layout.setRefreshing(false);
+            }
         }
     }
 }
