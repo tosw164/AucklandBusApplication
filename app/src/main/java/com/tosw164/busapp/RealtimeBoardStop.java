@@ -81,8 +81,11 @@ public class RealtimeBoardStop extends AppCompatActivity{
     }
 
 
-
-
+    /**
+     * Method that instantiates the favourite heart icon depending on if current stop is favourited
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_realtimeboard_for_stop, menu);
@@ -103,6 +106,7 @@ public class RealtimeBoardStop extends AppCompatActivity{
         switch (item.getItemId()){
             case R.id.menu_action_favorite:
 
+                //Toggle status of current stop number to/from favourite and notfavourite
                 IS_FAVOURITE = !IS_FAVOURITE;
 
                 if (IS_FAVOURITE){
@@ -126,20 +130,30 @@ public class RealtimeBoardStop extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method that adds current stop number associated with realtime board to favourites table
+     *  in the database.
+     */
     private void addStopToFavourites(){
         SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
         db.createFavouriteStop(stop_number, "TEST");
 
+        //TODO removed as used for debugging
         ToastMessage.makeToast(getBaseContext(), "added current stop from db");
         db.printAllFavouriteStops();
 
         db.close();
     }
 
+    /**
+     * Method that removes current stop number associated with realtime board from favourites
+     * table in the database.
+     */
     private void removeStopFromFavourites(){
         SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
         db.deleteFavouriteStop(new FavouriteStop(stop_number, ""));
 
+        //TODO removed as used for debugging
         ToastMessage.makeToast(getBaseContext(), "removed current stop from db");
         db.printAllFavouriteStops();
 
@@ -160,23 +174,27 @@ public class RealtimeBoardStop extends AppCompatActivity{
 
 
     private class getRealtimeTimetableData extends AsyncTask<String, Void, List<String>>{
-
         @Override
         protected List<String> doInBackground(String... params) {
             List<String> timetable_data = null;
 
+            //Calls the API to get JSON representing routes for stop for given hours from now.
             JSONObject json = AtApiRequests.getRealtimeTimetableFromStopNumber(getBaseContext(), params[0], HOURS_TO_GET + "");
             try{
                 if (json.getString("status").equals("OK")){
                     JSONObject responses = json.getJSONObject("response");
                     JSONArray movements = responses.getJSONArray("movements");
                     timetable_data = new ArrayList<String>();
+
+                    //Iterates through each route item and extract estimated and scheduled times.
                     for(int i = 0; i < movements.length(); i++){
-                        JSONObject move = movements.getJSONObject(i);
-                        timetable_data.add("" + move.get("route_short_name") +
-                                "\t" + move.get("destinationDisplay") +
-                                "\t" + formatTime(move.get("scheduledDepartureTime").toString()) +
-                                " " + formatTime(move.get("expectedDepartureTime").toString()));
+                        JSONObject trip = movements.getJSONObject(i);
+
+                        //TODO format this nicer
+                        timetable_data.add("" + trip.get("route_short_name") +
+                                "\t" + trip.get("destinationDisplay") +
+                                "\t" + formatTime(trip.get("scheduledDepartureTime").toString()) +
+                                " " + formatTime(trip.get("expectedDepartureTime").toString()));
                     }
                     timetable_data.add(" " + movements.length());
 
@@ -188,11 +206,20 @@ public class RealtimeBoardStop extends AppCompatActivity{
                 if (e.getMessage().equals("No value for movements")){
                     return null;
                 }
+
+                //Print stack trace for debugging and identifying when unexpected behaviour observed
                 e.printStackTrace();
             }
+
+            //Return timetable data to populate listview the user sees
             return timetable_data;
         }
 
+        /**
+         * Method that updates the listview on the GUI side of the application
+         * @param incoming_routes is list of strings containig the incoming routes
+         *                        and expected & scheduled departure times
+         */
         @Override
         protected void onPostExecute(List<String> incoming_routes) {
             if (incoming_routes == null){
@@ -202,8 +229,6 @@ public class RealtimeBoardStop extends AppCompatActivity{
 
             ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RealtimeBoardStop.this, android.R.layout.simple_list_item_1, incoming_routes);
             timetable_view.setAdapter(array_adapter);
-
-//            super.onPostExecute(incoming_routes);
         }
     }
 }
