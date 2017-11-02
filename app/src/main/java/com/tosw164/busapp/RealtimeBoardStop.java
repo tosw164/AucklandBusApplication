@@ -181,6 +181,9 @@ public class RealtimeBoardStop extends AppCompatActivity{
         protected List<String> doInBackground(String... params) {
             List<String> timetable_data = null;
 
+            String expected_time;
+            String scheduled_time;
+
             //Calls the API to get JSON representing routes for stop for given hours from now.
             JSONObject json = AtApiRequests.getRealtimeTimetableFromStopNumber(getBaseContext(), params[0], HOURS_TO_GET + "");
             try{
@@ -192,6 +195,8 @@ public class RealtimeBoardStop extends AppCompatActivity{
                     //Iterates through each route item and extract estimated and scheduled times.
                     for(int i = 0; i < movements.length(); i++){
                         JSONObject trip = movements.getJSONObject(i);
+
+                        //TODO convert time here
 
                         //TODO format this nicer
                         timetable_data.add("" + trip.get("route_short_name") +
