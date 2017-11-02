@@ -23,9 +23,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class RealtimeBoardStop extends AppCompatActivity{
 
@@ -181,7 +185,18 @@ public class RealtimeBoardStop extends AppCompatActivity{
         protected List<String> doInBackground(String... params) {
             List<String> timetable_data = null;
 
+            //Format to convert to/from
+            SimpleDateFormat expected_date_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            expected_date_format.setTimeZone(TimeZone.getTimeZone("NZST"));
+            SimpleDateFormat scheduled_date_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.s'Z'");
+            scheduled_date_format.setTimeZone(TimeZone.getTimeZone("NZST"));
+
+            SimpleDateFormat output_time_format = new SimpleDateFormat("HH:mm");
+
+            Date expected_date;
             String expected_time;
+
+            Date scheduled_date;
             String scheduled_time;
 
             //Calls the API to get JSON representing routes for stop for given hours from now.
@@ -197,12 +212,26 @@ public class RealtimeBoardStop extends AppCompatActivity{
                         JSONObject trip = movements.getJSONObject(i);
 
                         //TODO convert time here
+                        scheduled_time = trip.get("scheduledDepartureTime").toString();
+                        expected_time = trip.get("expectedDepartureTime").toString();
+
+
+                        System.out.println("SCHED" + scheduled_time +
+                                            "\nEXP" + expected_time);
+                        System.out.println(TimeZone.getDefault().toString());
+                        scheduled_date = scheduled_date_format.parse(scheduled_time);
+                        if(!expected_time.equals("null")){
+                            expected_date = expected_date_format.parse(expected_time);
+                        } else {
+                            expected_date = Calendar.getInstance().getTime();
+                        }
+
 
                         //TODO format this nicer
                         timetable_data.add("" + trip.get("route_short_name") +
                                 "\t" + trip.get("destinationDisplay") +
-                                "\t" + formatTime(trip.get("scheduledDepartureTime").toString()) +
-                                " " + formatTime(trip.get("expectedDepartureTime").toString()));
+                                "\t" + output_time_format.format(scheduled_date) +
+                                " " + output_time_format.format(expected_date));
                     }
                     timetable_data.add(" " + movements.length() + " " + Calendar.getInstance().getTime());
 
@@ -216,6 +245,8 @@ public class RealtimeBoardStop extends AppCompatActivity{
                 }
 
                 //Print stack trace for debugging and identifying when unexpected behaviour observed
+                e.printStackTrace();
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
 
