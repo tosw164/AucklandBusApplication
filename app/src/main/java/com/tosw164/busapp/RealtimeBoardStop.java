@@ -46,11 +46,10 @@ public class RealtimeBoardStop extends AppCompatActivity{
         setContentView(R.layout.activity_realtime_board_stop);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.realtime_stopsboard_toolbar);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
+        toolbar.setTitleTextColor(0x000000);
         setSupportActionBar(toolbar);
 
         //Get stop number from passed in bundle
-//        String stop_number = savedInstanceState.getString("stop_number");
         stop_number = getIntent().getExtras().getString("stop_number");
         System.out.println("STOP NUMBER ON OPEN REALTIMETIMETABLE: " + stop_number);
 
