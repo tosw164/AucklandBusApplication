@@ -167,19 +167,6 @@ public class RealtimeBoardStop extends AppCompatActivity{
         db.close();
     }
 
-
-    private static String formatTime(String raw){
-        if(raw == null){
-            return "";
-        }
-        if(raw.contains("T")){
-            String to_return = raw.split("T")[1];
-            return to_return.substring(0,5);
-        }
-        return "";
-    }
-
-
     private class getRealtimeTimetableData extends AsyncTask<String, Void, List<String>>{
         @Override
         protected List<String> doInBackground(String... params) {
@@ -211,27 +198,27 @@ public class RealtimeBoardStop extends AppCompatActivity{
                     for(int i = 0; i < movements.length(); i++){
                         JSONObject trip = movements.getJSONObject(i);
 
-                        //TODO convert time here
+                        //Getting raw time from JSON
                         scheduled_time = trip.get("scheduledDepartureTime").toString();
                         expected_time = trip.get("expectedDepartureTime").toString();
 
 
-                        System.out.println("SCHED" + scheduled_time +
-                                            "\nEXP" + expected_time);
-                        System.out.println(TimeZone.getDefault().toString());
-                        scheduled_date = scheduled_date_format.parse(scheduled_time);
-                        if(!expected_time.equals("null")){
-                            expected_date = expected_date_format.parse(expected_time);
-                        } else {
-                            expected_date = Calendar.getInstance().getTime();
-                        }
 
 
                         //TODO format this nicer
-                        timetable_data.add("" + trip.get("route_short_name") +
+                        scheduled_date = scheduled_date_format.parse(scheduled_time);
+                        String route_times_string = "" + trip.get("route_short_name") +
                                 "\t" + trip.get("destinationDisplay") +
-                                "\t" + output_time_format.format(scheduled_date) +
-                                " " + output_time_format.format(expected_date));
+                                "\t" + output_time_format.format(scheduled_date);
+
+                        if(!expected_time.equals("null")){
+                            expected_date = expected_date_format.parse(expected_time);
+                            route_times_string += " " + output_time_format.format(expected_date);
+                        }
+
+                        timetable_data.add(route_times_string);
+
+
                     }
                     timetable_data.add(" " + movements.length() + " " + Calendar.getInstance().getTime());
 
