@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by TheoOswandi on 5/09/2017.
  */
 
-public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
+public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
     private GoogleMap google_map;
     private LocationManager location_manager;
     private final int MY_PERMISSION_ACCESS_LOCATION = 99;
@@ -293,7 +294,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
                 floatingButtonFavouriteFunctionality();
                 break;
             case R.id.stopsonmap_FABmenu2:
-                Log.i(TAG, "SEARCH");
+                Log.i(TAG, "ENTERSTOP");
                 floatingButtonSearchFunctionality();
                 break;
             case R.id.stopsonmap_FABmenu3:
@@ -312,10 +313,7 @@ public class StopsOnMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     private void floatingButtonSearchFunctionality(){
-        SqliteTransportDatabase db = new SqliteTransportDatabase(getBaseContext());
-        db.printAllFavouriteStops();
-        Log.i(TAG, "Number of items in stops database: " + db.countStops());
-        db.close();
+        realtimeStopLogic();
     }
 
     private void floatingButtonFavouriteFunctionality(){
