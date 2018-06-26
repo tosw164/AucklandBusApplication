@@ -13,7 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.tosw164.busapp.dataclasses.BusrowAdapter;
 import com.tosw164.busapp.dataclasses.FavouriteStop;
+import com.tosw164.busapp.dataclasses.RealtimeBusInformationRow;
 import com.tosw164.busapp.miscmessages.ToastMessage;
 import com.tosw164.busapp.R;
 import com.tosw164.busapp.atapi.AtApiRequests;
@@ -167,10 +169,10 @@ public class RealtimeBoardStop extends AppCompatActivity{
         db.close();
     }
 
-    private class getRealtimeTimetableData extends AsyncTask<String, Void, List<String>>{
+    private class getRealtimeTimetableData extends AsyncTask<String, Void, List<RealtimeBusInformationRow>>{
         @Override
-        protected List<String> doInBackground(String... params) {
-            List<String> timetable_data = null;
+        protected List<RealtimeBusInformationRow> doInBackground(String... params) {
+            List<RealtimeBusInformationRow> timetable_data = null;
 
             //Format to convert to/from
             SimpleDateFormat expected_date_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -192,7 +194,7 @@ public class RealtimeBoardStop extends AppCompatActivity{
                 if (json.getString("status").equals("OK")){
                     JSONObject responses = json.getJSONObject("response");
                     JSONArray movements = responses.getJSONArray("movements");
-                    timetable_data = new ArrayList<String>();
+                    timetable_data = new ArrayList<RealtimeBusInformationRow>();
 
                     //Iterates through each route item and extract estimated and scheduled times.
                     for(int i = 0; i < movements.length(); i++){
@@ -206,21 +208,28 @@ public class RealtimeBoardStop extends AppCompatActivity{
 
 
                         //TODO format this nicer
+                        RealtimeBusInformationRow row;
                         scheduled_date = scheduled_date_format.parse(scheduled_time);
-                        String route_times_string = "" + trip.get("route_short_name") +
-                                "\t" + trip.get("destinationDisplay") +
-                                "\t" + output_time_format.format(scheduled_date);
 
-                        if(!expected_time.equals("null")){
+                        if(expected_time.equals("null")){
+                            row = new RealtimeBusInformationRow(trip.get("route_short_name").toString(),
+                                    trip.get("destinationDisplay").toString(),
+                                    output_time_format.format(scheduled_date));
+
+                        } else {
                             expected_date = expected_date_format.parse(expected_time);
-                            route_times_string += " " + output_time_format.format(expected_date);
+
+                            row = new RealtimeBusInformationRow(trip.get("route_short_name").toString(),
+                                    trip.get("destinationDisplay").toString(),
+                                    output_time_format.format(scheduled_date),
+                                    output_time_format.format(expected_date));
                         }
 
-                        timetable_data.add(route_times_string);
+                        timetable_data.add(row);
 
 
                     }
-                    timetable_data.add(" " + movements.length() + " " + Calendar.getInstance().getTime());
+//                    timetable_data.add(" " + movements.length() + " " + Calendar.getInstance().getTime());
 
 
                 }
@@ -247,11 +256,11 @@ public class RealtimeBoardStop extends AppCompatActivity{
          *                        and expected & scheduled departure times
          */
         @Override
-        protected void onPostExecute(List<String> incoming_routes) {
+        protected void onPostExecute(List<RealtimeBusInformationRow> incoming_routes) {
             if (incoming_routes == null){
                 ToastMessage.makeToast(getBaseContext(), "No available routes");
             } else {
-                ArrayAdapter<String> array_adapter = new ArrayAdapter<String>(RealtimeBoardStop.this, android.R.layout.simple_list_item_1, incoming_routes);
+                BusrowAdapter array_adapter = new BusrowAdapter(RealtimeBoardStop.this, incoming_routes);
                 timetable_view.setAdapter(array_adapter);
             }
 
