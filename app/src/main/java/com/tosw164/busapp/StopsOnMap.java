@@ -15,6 +15,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tosw164.busapp.miscmessages.ToastMessage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +50,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
     private LocationManager location_manager;
     private final int MY_PERMISSION_ACCESS_LOCATION = 99;
 
-    Button button1;
     LinearLayout fab_container1, fab_container2, fab_container3;
     FloatingActionButton main_fab, menu_fab1, menu_fab2, menufab3;
     Toolbar toolbar;
@@ -95,10 +97,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
      * Sets up components used in this activity
      */
     private void setupComponents() {
-        button1 = (Button) findViewById(R.id.stopsonmap_button1);
-        button1.setOnClickListener(this);
-        button1.setText("Repopulate Stop Table");
-
         //Logic for fab menu
 //        https://stackoverflow.com/questions/30699302/android-design-support-library-fab-menu
 
@@ -128,6 +126,24 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
         fab_menu_open = false;
 
         toolbar = (Toolbar) findViewById(R.id.stopsonmap_toolbar);
+        toolbar.setTitleTextColor(0x000000);
+        setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.stopsonmap_toolbar, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.stoponmap_toolbar_repop:
+                Log.i(TAG, "Repop start");
+                AtApiDatabaseRequests.populateDB(getBaseContext());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -271,10 +287,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.stopsonmap_button1:
-                Log.i(TAG, "button1");
-                AtApiDatabaseRequests.populateDB(getBaseContext());
-                break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "FAVOURITES");
                 floatingButtonFavouriteFunctionality();
