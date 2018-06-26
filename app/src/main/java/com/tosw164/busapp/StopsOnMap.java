@@ -46,7 +46,7 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
     private LocationManager location_manager;
     private final int MY_PERMISSION_ACCESS_LOCATION = 99;
 
-    Button button1, button2;
+    Button button1;
     LinearLayout fab_container1, fab_container2, fab_container3;
     FloatingActionButton main_fab, menu_fab1, menu_fab2, menufab3;
 
@@ -96,10 +96,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
         button1 = (Button) findViewById(R.id.stopsonmap_button1);
         button1.setOnClickListener(this);
         button1.setText("Repopulate Stop Table");
-
-        button2 = (Button) findViewById(R.id.stopsonmap_button2);
-        button2.setOnClickListener(this);
-        button2.setText("Change To Realtime");
 
         //Logic for fab menu
 //        https://stackoverflow.com/questions/30699302/android-design-support-library-fab-menu
@@ -284,10 +280,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
             case R.id.stopsonmap_button1:
                 Log.i(TAG, "button1");
                 AtApiDatabaseRequests.populateDB(getBaseContext());
-                break;
-            case R.id.stopsonmap_button2:
-                Log.i(TAG, "Change to realtime");
-                realtimeStopLogic();
                 break;
             case R.id.stopsonmap_FABmenu1:
                 Log.i(TAG, "FAVOURITES");

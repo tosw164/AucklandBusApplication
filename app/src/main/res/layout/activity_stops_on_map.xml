@@ -19,12 +19,6 @@
             android:layout_height="wrap_content"
             android:text="button1"
             android:layout_weight="50"/>
-        <Button
-            android:id="@+id/stopsonmap_button2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="button2"
-            android:layout_weight="50"/>
     </LinearLayout>
 
 
