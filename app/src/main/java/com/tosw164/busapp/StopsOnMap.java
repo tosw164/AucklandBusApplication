@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +50,7 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
     Button button1;
     LinearLayout fab_container1, fab_container2, fab_container3;
     FloatingActionButton main_fab, menu_fab1, menu_fab2, menufab3;
+    Toolbar toolbar;
 
     List<BusStop> all_stops;
     ConcurrentHashMap<String, Marker> all_markers;
@@ -125,6 +127,7 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
 
         fab_menu_open = false;
 
+        toolbar = (Toolbar) findViewById(R.id.stopsonmap_toolbar);
     }
 
     /**
@@ -165,16 +168,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
             }
         });
 
-//        google_map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-//            @Override
-//            public boolean onMyLocationButtonClick() {
-//                Location my_location = getMyLocation();
-//                google_map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(my_location.getLatitude(), my_location.getLongitude()), (float)16.5));
-////                google_map.animateCamera(CameraUpdateFactory.zoomTo((float)16.5));
-//                return true;
-//            }
-//        });
-
         //Logic for when user presses info window after selecting marker
         google_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -182,7 +175,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
                 Log.i(TAG, marker.getTitle() + " " + marker.getSnippet());
                 HashMap<String, String> stopnumber = new HashMap<String, String>();
                 stopnumber.put("stop_number", marker.getTitle());
-//                ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), ".RealtimeBoardStop"));
                 ChangeActivity.launchIntent(new ActivitySwitchContainer(stopnumber, getBaseContext(), "RealtimeBoardStop"));
             }
         });
@@ -191,13 +183,15 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
         Location my_location = getMyLocation();
 
         //Moves camera based on if location is enabled and something is cached or not
-        if (isLocationOn() && my_location != null) {
+        if (isLocationOn()) {
             google_map.setMyLocationEnabled(true); //TODO make sure this is safe
+        }
+
+        if (my_location != null){ //location in cache
             //https://stackoverflow.com/questions/14441653/how-can-i-let-google-maps-api-v2-go-directly-to-my-location
             LatLng my_latlng = new LatLng(my_location.getLatitude(), my_location.getLongitude());
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(my_latlng, 17));
-
-        } else {
+        }else {
             //Hardcoded LatLng of Auckland from googling "Auckland latlng"
             LatLng hardcoded_latlng = new LatLng(-36.843864, 174.766438);
             google_map.moveCamera(CameraUpdateFactory.newLatLngZoom(hardcoded_latlng, 17));
@@ -301,7 +295,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
                 Log.i(TAG, "default");
                 break;
         }
-
     }
 
     private void floatingButtonSearchFunctionality(){
@@ -371,10 +364,8 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
 
     private void mainFABaction(){
         if (!fab_menu_open){
-            //open fab menu
             animateFloatingActionMenuOpen();
         } else {
-            //close fab menu
             animateFloatingActionMenuClose();
         }
     }
@@ -383,9 +374,8 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
      * Animates opening of floating action menu
      */
     private void animateFloatingActionMenuOpen(){
-        fab_menu_open = true;   //set flag
+        fab_menu_open = true;
 
-        //Sets all the containers to visible from previous GONE state
         fab_container1.setVisibility(View.VISIBLE);
         fab_container2.setVisibility(View.VISIBLE);
         fab_container3.setVisibility(View.VISIBLE);
@@ -393,7 +383,6 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
         //Rotate main button to make + into a X
         main_fab.animate().rotationBy(45);
 
-        //Initialise offset values
         float base_translate = getResources().getDimension(R.dimen.fab_menu_translate_base);
         float translate_unit = getResources().getDimension(R.dimen.fab_menu_translate_unit);
 
@@ -407,7 +396,7 @@ public class StopsOnMap extends AppCompatActivity implements OnMapReadyCallback,
      * Animate the closing of action menu
      */
     private void animateFloatingActionMenuClose(){
-        fab_menu_open = false;      //set flag
+        fab_menu_open = false;
         main_fab.animate().rotationBy(-45); //Make Icon + again from x
 
         //Return containers to behind main action button & hide containers

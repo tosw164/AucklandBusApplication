@@ -6,12 +6,20 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/stopsonmap_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:background="@color/colorPrimary"/>
+
     <LinearLayout
         android:id="@+id/stopsonmap_buttoncontainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="100"
         android:orientation="horizontal"
+        android:layout_below="@id/stopsonmap_toolbar"
         >
         <Button
             android:id="@+id/stopsonmap_button1"
@@ -113,7 +121,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Stop"
+                android:text="Add Stop WIP"
                 android:background="@color/white"
                 android:layout_gravity="center_vertical">
 

@@ -48,7 +48,7 @@ public class BusStop {
         this.lng = lng;
     }
 
-        @Override
+    @Override
     public String toString() {
         return (stop_id + " " + short_name + " " + lat + ":" + lng);
     }
